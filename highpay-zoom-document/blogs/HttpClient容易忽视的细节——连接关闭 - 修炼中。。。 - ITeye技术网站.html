@@ -1,0 +1,685 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0035)http://seanhe.iteye.com/blog/234759 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" async="" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/dynamicFloat.js.下载"></script><script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/ca-pub-8990951720398508.js.下载"></script><script type="text/javascript" async="" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm"></script><script type="text/javascript" async="" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm(1)"></script><script type="text/javascript" async="" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm(2)"></script>
+    
+    <title>HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站</title>
+    <meta name="description" content="  HttpClient client = new HttpClient();  HttpMethod method = new GetMethod(&quot;http://www.apache.org&quot;);  try {    client.executeMethod(method);    byte[] responseBody = null;        responseBody ...">
+    <meta name="keywords" content="应用服务器, Apache, Socket, Unix, thread HttpClient容易忽视的细节——连接关闭">
+    <link rel="shortcut icon" href="http://seanhe.iteye.com/images/favicon.ico" type="image/x-icon">
+    <link rel="search" type="application/opensearchdescription+xml" href="http://seanhe.iteye.com/open_search.xml" title="ITeye">
+    <link href="http://seanhe.iteye.com/rss" rel="alternate" title="修炼中。。。" type="application/rss+xml">
+    <link href="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/blog.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/blue.css" media="screen" rel="stylesheet" type="text/css">
+    <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/hm.js.下载"></script><script type="text/javascript" async="" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/ga.js.下载"></script><script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/application.js.下载" type="text/javascript"></script>    
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-535605-1']);
+  _gaq.push(['_setDomainName', 'iteye.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+      <link href="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/SyntaxHighlighter.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/shCoreCommon.js.下载" type="text/javascript"></script>
+<script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/hotkey.js.下载" type="text/javascript"></script>
+  <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/code_favorites.js.下载" type="text/javascript"></script>
+<script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/weiboshare.js.下载" type="text/javascript"></script>
+  <script>
+		var _hmt = _hmt || [];
+		(function() {
+		 var hm = document.createElement("script");
+		 hm.src = "//hm.baidu.com/hm.js?e19a8b00cf63f716d774540875007664";
+		 var s = document.getElementsByTagName("script")[0]; 
+		 s.parentNode.insertBefore(hm, s);
+		})();
+	</script>
+    
+  <style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/get_ads.php" type="text/javascript"></script></head>
+  <body><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+    <div id="header">
+	      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/blogs/subjects">专栏</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="http://seanhe.iteye.com/blog/234759#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="display:none;">
+    <a target="_blank" href="http://job.iteye.com/iteye">知识库</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+
+	      <div id="user_nav">
+      <a href="http://seanhe.iteye.com/login" class="welcome" title="登录">您还未登录 !</a>
+    <a href="http://seanhe.iteye.com/login">登录</a>
+    <a href="http://seanhe.iteye.com/signup" class="nobg">注册</a>
+  </div>
+
+	    
+    </div>
+
+    <div id="page">
+        <div id="branding" class="clearfix" style="overflow: hidden;background: none;padding:0 0 2px;">
+        	<div class="J_adv" data-view="true" data-mod="ad_popu_184" data-mtp="34" data-order="92" data-con="ad_content_1127" style="width: 960px; height: 90px;"><!-- 广告占位容器 --><div id="cpro_u2720131"><iframe id="iframeu2720131_0" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm.html" width="960" height="90" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div><!-- 投放代码 --><script type="text/javascript">   /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: 'u2720131'      });  </script>  <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/c.js.下载" type="text/javascript"></script></div>
+        </div>
+      <div id="branding" class="clearfix">
+        <div id="blog_name">
+          <h1><a href="http://seanhe.iteye.com/">修炼中。。。</a></h1>
+        </div>
+        <div id="fd"></div>
+        <div id="blog_navbar">
+          <ul>
+            <li class="blog_navbar_for"><a href="http://seanhe.iteye.com/"><strong>博客</strong></a></li>
+            <li><a href="http://seanhe.iteye.com/weibo">微博</a></li>
+            <li><a href="http://seanhe.iteye.com/album">相册</a></li>
+            <li><a href="http://seanhe.iteye.com/link">收藏</a></li>
+            <li><a href="http://seanhe.iteye.com/blog/guest_book">留言</a></li>
+            <li><a href="http://seanhe.iteye.com/blog/profile">关于我</a></li>
+          </ul>
+    
+          <div class="search">
+            <form action="http://seanhe.iteye.com/blog/search" method="get">
+              <input class="search_text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text" value="">
+              <input class="submit_search" type="submit" value="">
+            </form>
+          </div> 
+          <div id="fd"></div>         
+        </div>
+      </div>
+      
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+
+          
+
+
+<div class="h-entry" style="display:none">
+  <a href="http://seanhe.iteye.com/" class="p-author" target="_blank">SeanHe</a>
+</div>
+
+
+<div class="blog_main">
+  <div class="blog_title">
+    <h3>
+      <a href="http://seanhe.iteye.com/blog/234759">HttpClient容易忽视的细节——连接关闭</a>
+      <em class="actions">      </em>
+    </h3>
+    <ul class="blog_categories"><strong>博客分类：</strong> <li><a href="http://seanhe.iteye.com/category/27923">java</a></li> </ul>
+        <div class="news_tag"><a href="http://www.iteye.com/blogs/tag/%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8">应用服务器</a><a href="http://www.iteye.com/blogs/tag/Apache">Apache</a><a href="http://www.iteye.com/blogs/tag/Socket">Socket</a><a href="http://www.iteye.com/blogs/tag/Unix">Unix</a><a href="http://www.iteye.com/blogs/tag/thread">thread</a>&nbsp;</div>
+    	  
+    	
+    	
+  		
+      </div>
+
+  <div id="blog_content" class="blog_content">
+    <div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=HttpClient%20client%20%3D%20new%20HttpClient()%3B%0AHttpMethod%20method%20%3D%20new%20GetMethod(%22http%3A%2F%2Fwww.apache.org%22)%3B%0Atry%20%7B%0A%20%20client.executeMethod(method)%3B%0A%20%20byte%5B%5D%20responseBody%20%3D%20null%3B%0A%20%20%0A%20%20responseBody%20%3D%20method.getResponseBody()%3B%0A%20%20%0A%7D%20catch%20(HttpException%20e)%20%7B%0A%20%20%2F%2F%20TODO%20Auto-generated%20catch%20block%0A%20%20e.printStackTrace()%3B%0A%7D%20catch%20(IOException%20e)%20%7B%0A%20%20%2F%2F%20TODO%20Auto-generated%20catch%20block%0A%20%20e.printStackTrace()%3B%0A%7Dfinally%7B%0A%20%20method.releaseConnection()%3B%0A%20%20%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>HttpClient&nbsp;client&nbsp;=&nbsp;</span><span class="keyword">new</span><span>&nbsp;HttpClient();&nbsp;&nbsp;</span></span></li><li><span>HttpMethod&nbsp;method&nbsp;=&nbsp;<span class="keyword">new</span><span>&nbsp;GetMethod(</span><span class="string">"http://www.apache.org"</span><span>);&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">try</span><span>&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;client.executeMethod(method);&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;<span class="keyword">byte</span><span>[]&nbsp;responseBody&nbsp;=&nbsp;</span><span class="keyword">null</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;responseBody&nbsp;=&nbsp;method.getResponseBody();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>}&nbsp;<span class="keyword">catch</span><span>&nbsp;(HttpException&nbsp;e)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;<span class="comment">//&nbsp;TODO&nbsp;Auto-generated&nbsp;catch&nbsp;block</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;e.printStackTrace();&nbsp;&nbsp;</span></li><li><span>}&nbsp;<span class="keyword">catch</span><span>&nbsp;(IOException&nbsp;e)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;<span class="comment">//&nbsp;TODO&nbsp;Auto-generated&nbsp;catch&nbsp;block</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;e.printStackTrace();&nbsp;&nbsp;</span></li><li><span>}<span class="keyword">finally</span><span>{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;method.releaseConnection();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="0" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">HttpClient client = new HttpClient();
+HttpMethod method = new GetMethod("http://www.apache.org");
+try {
+  client.executeMethod(method);
+  byte[] responseBody = null;
+  
+  responseBody = method.getResponseBody();
+  
+} catch (HttpException e) {
+  // TODO Auto-generated catch block
+  e.printStackTrace();
+} catch (IOException e) {
+  // TODO Auto-generated catch block
+  e.printStackTrace();
+}finally{
+  method.releaseConnection();
+  
+}
+</pre>
+<br>大部分人使用HttpClient都是使用类似上面的事例代码，包括Apache官方的例子也是如此。最近我在使用HttpClient是发现一次循环发送大量请求到服务器会导致APACHE服务器的链接被占满，后续的请求便排队等待。
+<br>我服务器端APACHE的配置
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=Timeout%2030%0AKeepAlive%20On%20%20%20%23%E8%A1%A8%E7%A4%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E4%B8%8D%E4%BC%9A%E4%B8%BB%E5%8A%A8%E5%85%B3%E9%97%AD%E9%93%BE%E6%8E%A5%0AMaxKeepAliveRequests%20100%0AKeepAliveTimeout%20180%20%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>Timeout&nbsp;</span><span class="number">30</span><span>&nbsp;&nbsp;</span></span></li><li><span>KeepAlive&nbsp;On&nbsp;&nbsp;&nbsp;#表示服务器端不会主动关闭链接&nbsp;&nbsp;</span></li><li><span>MaxKeepAliveRequests&nbsp;<span class="number">100</span><span>&nbsp;&nbsp;</span></span></li><li><span>KeepAliveTimeout&nbsp;<span class="number">180</span><span>&nbsp;&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="1" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">Timeout 30
+KeepAlive On   #表示服务器端不会主动关闭链接
+MaxKeepAliveRequests 100
+KeepAliveTimeout 180 
+</pre>
+<br>因此这样的配置就会导致每个链接至少要过180S才会被释放，这样在大量请求访问时就必然会造成链接被占满，请求等待的情况。
+<br>在通过DEBUH后发现HttpClient在method.releaseConnection()后并没有把链接关闭，这个方法只是将链接返回给connection manager。如果使用HttpClient client = new HttpClient()实例化一个HttpClient connection manager默认实现是使用SimpleHttpConnectionManager。SimpleHttpConnectionManager有个构造函数如下
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%2F**%0A%20*%20The%20connection%20manager%20created%20with%20this%20constructor%20will%20try%20to%20keep%20the%20%0A%20*%20connection%20open%20(alive)%20between%20consecutive%20requests%20if%20the%20alwaysClose%20%0A%20*%20parameter%20is%20set%20to%20%3Ctt%3Efalse%3C%2Ftt%3E.%20Otherwise%20the%20connection%20manager%20will%20%0A%20*%20always%20close%20connections%20upon%20release.%0A%20*%20%0A%20*%20%40param%20alwaysClose%20if%20set%20%3Ctt%3Etrue%3C%2Ftt%3E%2C%20the%20connection%20manager%20will%20always%0A%20*%20%20%20%20close%20connections%20upon%20release.%0A%20*%2F%0Apublic%20SimpleHttpConnectionManager(boolean%20alwaysClose)%20%7B%0A%20%20%20%20super()%3B%0A%20%20%20%20this.alwaysClose%20%3D%20alwaysClose%3B%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="comment">/**</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;The&nbsp;connection&nbsp;manager&nbsp;created&nbsp;with&nbsp;this&nbsp;constructor&nbsp;will&nbsp;try&nbsp;to&nbsp;keep&nbsp;the&nbsp;</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;connection&nbsp;open&nbsp;(alive)&nbsp;between&nbsp;consecutive&nbsp;requests&nbsp;if&nbsp;the&nbsp;alwaysClose&nbsp;</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;parameter&nbsp;is&nbsp;set&nbsp;to&nbsp;&lt;tt&gt;false&lt;/tt&gt;.&nbsp;Otherwise&nbsp;the&nbsp;connection&nbsp;manager&nbsp;will&nbsp;</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;always&nbsp;close&nbsp;connections&nbsp;upon&nbsp;release.</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;@param&nbsp;alwaysClose&nbsp;if&nbsp;set&nbsp;&lt;tt&gt;true&lt;/tt&gt;,&nbsp;the&nbsp;connection&nbsp;manager&nbsp;will&nbsp;always</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;close&nbsp;connections&nbsp;upon&nbsp;release.</span>&nbsp;</span></li><li><span><span class="comment">&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">public</span><span>&nbsp;SimpleHttpConnectionManager(</span><span class="keyword">boolean</span><span>&nbsp;alwaysClose)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span><span>();&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span><span>.alwaysClose&nbsp;=&nbsp;alwaysClose;&nbsp;&nbsp;</span></span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="2" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">/**
+ * The connection manager created with this constructor will try to keep the 
+ * connection open (alive) between consecutive requests if the alwaysClose 
+ * parameter is set to &lt;tt&gt;false&lt;/tt&gt;. Otherwise the connection manager will 
+ * always close connections upon release.
+ * 
+ * @param alwaysClose if set &lt;tt&gt;true&lt;/tt&gt;, the connection manager will always
+ *    close connections upon release.
+ */
+public SimpleHttpConnectionManager(boolean alwaysClose) {
+    super();
+    this.alwaysClose = alwaysClose;
+}
+</pre>
+<br>看方法注释我们就可以看到如果alwaysClose设为true在链接释放之后connection manager 就会关闭链。在我们HttpClient client = new HttpClient()这样实例化一个client时connection manager是这样被实例化的
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=this.httpConnectionManager%20%3D%20new%20SimpleHttpConnectionManager()%3B%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">this</span><span>.httpConnectionManager&nbsp;=&nbsp;</span><span class="keyword">new</span><span>&nbsp;SimpleHttpConnectionManager();&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="3" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">this.httpConnectionManager = new SimpleHttpConnectionManager();
+</pre>
+<br>因此alwaysClose默认是false,connection是不会被主动关闭的，因此我们就有了一个客户端关闭链接的方法。
+<br><strong>方法一：</strong>
+<br>把事例代码中的第一行实例化代码改为如下即可，在method.releaseConnection();之后connection manager会关闭connection 。
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=HttpClient%20client%20%3D%20new%20HttpClient(new%20HttpClientParams()%2Cnew%20SimpleHttpConnectionManager(true)%20)%3B%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>HttpClient&nbsp;client&nbsp;=&nbsp;</span><span class="keyword">new</span><span>&nbsp;HttpClient(</span><span class="keyword">new</span><span>&nbsp;HttpClientParams(),</span><span class="keyword">new</span><span>&nbsp;SimpleHttpConnectionManager(</span><span class="keyword">true</span><span>)&nbsp;);&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="4" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">HttpClient client = new HttpClient(new HttpClientParams(),new SimpleHttpConnectionManager(true) );
+</pre>
+<br><strong>方法二：</strong>
+<br>实例化代码使用：HttpClient client = new HttpClient();
+<br>在method.releaseConnection();之后加上
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=((SimpleHttpConnectionManager)client.getHttpConnectionManager()).shutdown()%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>((SimpleHttpConnectionManager)client.getHttpConnectionManager()).shutdown();&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="5" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">((SimpleHttpConnectionManager)client.getHttpConnectionManager()).shutdown();</pre>
+<br>shutdown源代码很简单，看了一目了然
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=public%20void%20shutdown()%20%7B%0A%20%20%20%20httpConnection.close()%3B%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;shutdown()&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;httpConnection.close();&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="6" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">public void shutdown() {
+    httpConnection.close();
+}
+</pre>
+<br><strong>方法三：</strong>
+<br>实例化代码使用：HttpClient client = new HttpClient();
+<br>在method.releaseConnection();之后加上
+<br>client.getHttpConnectionManager().closeIdleConnections(0);此方法源码代码如下：
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=public%20void%20closeIdleConnections(long%20idleTimeout)%20%7B%0A%20%20%20%20long%20maxIdleTime%20%3D%20System.currentTimeMillis()%20-%20idleTimeout%3B%0A%20%20%20%20if%20(idleStartTime%20%3C%3D%20maxIdleTime)%20%7B%0A%20%20%20%20%20%20%20%20httpConnection.close()%3B%0A%20%20%20%20%7D%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;closeIdleConnections(</span><span class="keyword">long</span><span>&nbsp;idleTimeout)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span><span>&nbsp;maxIdleTime&nbsp;=&nbsp;System.currentTimeMillis()&nbsp;-&nbsp;idleTimeout;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span><span>&nbsp;(idleStartTime&nbsp;&lt;=&nbsp;maxIdleTime)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpConnection.close();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="7" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">public void closeIdleConnections(long idleTimeout) {
+    long maxIdleTime = System.currentTimeMillis() - idleTimeout;
+    if (idleStartTime &lt;= maxIdleTime) {
+        httpConnection.close();
+    }
+}
+</pre>
+<br>将idleTimeout设为0可以确保链接被关闭。
+<br>以上这三种方法都是有客户端主动关闭TCP链接的方法。下面再介绍由服务器端自动关闭链接的方法。
+<br><strong>方法四：</strong>
+<br>代码实现很简单，所有代码就和最上面的事例代码一样。只需要在HttpMethod method = new GetMethod("http://www.apache.org");加上一行HTTP头的设置即可
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=method.setRequestHeader(%22Connection%22%2C%20%22close%22)%3B%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>method.setRequestHeader(</span><span class="string">"Connection"</span><span>,&nbsp;</span><span class="string">"close"</span><span>);&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#" pre_index="8" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">method.setRequestHeader("Connection", "close");
+</pre>
+<br>看一下HTTP协议中关于这个属性的定义：
+<br>HTTP/1.1 defines the "close" connection option for the sender to signal that the connection will be closed after completion of the response. For example, 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Connection: close
+<br>现在再说一下客户端关闭链接和服务器端关闭链接的区别。如果采用客户端关闭链接的方法，在客户端的机器上使用netstat –an命令会看到很多TIME_WAIT的TCP链接。如果服务器端主动关闭链接这中情况就出现在服务器端。
+<br>参考WIKI上的说明http://wiki.apache.org/HttpComponents/FrequentlyAskedConnectionManagementQuestions
+<br>The TIME_WAIT state is a protection mechanism in TCP. The side that closes a socket connection orderly will keep the connection in state TIME_WAIT for some time, typically between 1 and 4 minutes.
+<br>TIME_WAIT的状态会出现在主动关闭链接的这一端。TCP协议中TIME_WAIT状态主要是为了保证数据的完整传输。具体可以参考此文档：
+<br>http://www.softlab.ntua.gr/facilities/documentation/unix/unix-socket-faq/unix-socket-faq-2.html#ss2.7
+<br><strong>另外强调一下使用上面这些方法关闭链接是在我们的应用中明确知道不需要重用链接时可以主动关闭链接来释放资源。如果你的应用是需要重用链接的话就没必要这么做，使用原有的链接还可以提供性能。</strong>
+  </div>
+
+  
+
+  
+  <div class="J_adv" data-view="true" data-mod="ad_popu_171" data-mtp="43" data-order="93" data-con="ad_content_488" style="width: 680px; height: 90px;"><script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/adsbygoogle.js.下载"></script><ins class="adsbygoogle" style="display:inline-block;width:468px;height:60px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/1918544322" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:468px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:468px;background-color:transparent"><iframe width="468" height="60" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/saved_resource.html"></iframe></ins></ins></ins><script>(adsbygoogle=window.adsbygoogle || []).push({});</script></div>
+  
+
+  <div id="bottoms" class="clearfix">
+    
+    <div id="share_weibo">分享到：
+      <a data-type="sina" href="javascript:;" title="分享到新浪微博"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/sina.jpg"></a>
+      <a data-type="qq" href="javascript:;" title="分享到腾讯微博"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/tec.jpg"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="http://seanhe.iteye.com/blog/407955" class="next" title="让jquery plugin boxy支持国际化">让jquery plugin boxy支持国际化</a>
+      |
+      <a href="http://seanhe.iteye.com/blog/212108" class="pre" title="Ubunto8.04升级firefox3正式版中文支持问题解决">Ubunto8.04升级firefox3正式版中文支持问题 ...</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>2008-08-30 12:22</li>
+      <li>浏览 52568</li>
+      <li><a href="http://seanhe.iteye.com/blog/234759#comments">评论(9)</a></li>
+       <li>论坛回复 / <a href="http://seanhe.iteye.com/topic/234759">浏览</a> (8 / 29393)</li> 
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/language">编程语言</a></li>      
+      <li class="last"><a href="http://www.iteye.com/wiki/blog/234759" target="_blank" class="more">相关推荐</a></li>
+    </ul>    
+  </div>
+  
+		    
+		
+<div class="boutique-curr-box blog_comment">
+	  <div class="boutique-curr clearfix">
+	    <h5 class="h3titles">参考知识库</h5>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/hbase"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/1479363734443_443.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/hbase" classs="title">Hbase知识库</a>
+              <span>
+                 <em>5364</em>&nbsp;&nbsp;关注 <i>|</i> <em>63</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/mongodb"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/1478676229520_520.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/mongodb" classs="title">MongoDB知识库</a>
+              <span>
+                 <em>4462</em>&nbsp;&nbsp;关注 <i>|</i> <em>271</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/blockchain"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/1476175342721_721.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/blockchain" classs="title">区块链知识库</a>
+              <span>
+                 <em>2759</em>&nbsp;&nbsp;关注 <i>|</i> <em>90</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/objective-c"><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/1477273962202_202.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/objective-c" classs="title">Objective-C知识库</a>
+              <span>
+                 <em>4010</em>&nbsp;&nbsp;关注 <i>|</i> <em>1213</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	  </div>
+</div>
+ 		
+      
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    <div id="bc2389026">
+  <div class="comment_title">
+    9 楼
+    <a href="http://louwenlong.iteye.com/" target="_blank" title="可爱的小狗">可爱的小狗</a>
+    2016-04-27&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">学习了<img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_biggrin.gif">&nbsp;<img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_biggrin.gif">&nbsp;<img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_biggrin.gif"> </div>
+</div>
+
+<div id="bc752429">
+  <div class="comment_title">
+    8 楼
+    <a href="http://javatar.iteye.com/" target="_blank" title="javatar">javatar</a>
+    2008-11-23&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">官方文档有建议使用空闲连接检查线程：
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=import%20org.apache.commons.httpclient.util.IdleConnectionTimeoutThread%3B%0A%2F%2F%20%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%0AIdleConnectionTimeoutThread%20thread%20%3D%20new%20IdleConnectionTimeoutThread()%3B%0A%2F%2F%20%E6%B3%A8%E5%86%8C%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86%E5%99%A8%0Athread.addConnectionManager(httpClient.getHttpConnectionManager())%3B%0A%2F%2F%20%E5%90%AF%E5%8A%A8%E7%BA%BF%E7%A8%8B%0Athread.start()%3B%0A%2F%2F%20%E5%9C%A8%E6%9C%80%E5%90%8E%EF%BC%8C%E5%85%B3%E9%97%AD%E7%BA%BF%E7%A8%8B%0Athread.shutdown()%3B%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">import</span><span>&nbsp;org.apache.commons.httpclient.util.IdleConnectionTimeoutThread;&nbsp;&nbsp;</span></span></li><li><span><span class="comment">//&nbsp;创建线程</span><span>&nbsp;&nbsp;</span></span></li><li><span>IdleConnectionTimeoutThread&nbsp;thread&nbsp;=&nbsp;<span class="keyword">new</span><span>&nbsp;IdleConnectionTimeoutThread();&nbsp;&nbsp;</span></span></li><li><span><span class="comment">//&nbsp;注册连接管理器</span><span>&nbsp;&nbsp;</span></span></li><li><span>thread.addConnectionManager(httpClient.getHttpConnectionManager());&nbsp;&nbsp;</span></li><li><span><span class="comment">//&nbsp;启动线程</span><span>&nbsp;&nbsp;</span></span></li><li><span>thread.start();&nbsp;&nbsp;</span></li><li><span><span class="comment">//&nbsp;在最后，关闭线程</span><span>&nbsp;&nbsp;</span></span></li><li><span>thread.shutdown();&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="752429" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#bc752429" pre_index="0" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">import org.apache.commons.httpclient.util.IdleConnectionTimeoutThread;
+// 创建线程
+IdleConnectionTimeoutThread thread = new IdleConnectionTimeoutThread();
+// 注册连接管理器
+thread.addConnectionManager(httpClient.getHttpConnectionManager());
+// 启动线程
+thread.start();
+// 在最后，关闭线程
+thread.shutdown();
+</pre></div>
+</div>
+
+<div id="bc714224">
+  <div class="comment_title">
+    7 楼
+    <a href="http://show-your-sister.iteye.com/" target="_blank" title="sdh5724">sdh5724</a>
+    2008-10-29&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">楼上的说法是对的, 但是, 性能来说, 是不合适的.
+<br>首先, 我想问你, 既然是轮询, 为什么HttpURLConnection要每次创建.&nbsp; 既然是个持续的过程, 就不应该每次HttpURLConnection对象重新创建, 你应该重复使用这个对象. HttpURLConnection会持有连接的, 如果断开, 我记得他会去尝试连接. </div>
+</div>
+
+<div id="bc713958">
+  <div class="comment_title">
+    6 楼
+    <a href="http://seanhe.iteye.com/" target="_blank" title="SeanHe">SeanHe</a>
+    2008-10-28&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">kjah 写道</div><div class="quote_div">但使用netstat发现很多TIME_WAIT,时间长点后会出现端口都被占用的状况 address already in use :connect，使用HttpURLConnection.disconnect()也没有效果。</div>
+<br>如果你是应为客户端出现很多的TIME_WAIT造成端口占用，你不妨试一下“方法四”在HTTP请求头上设置"Connection", "close"这样服务器会来主动关闭链接，这样就不会在客户端产生很多的TIME_WAIT</div>
+</div>
+
+<div id="bc713122">
+  <div class="comment_title">
+    5 楼
+    <a href="http://kjah.iteye.com/" target="_blank" title="kjah">kjah</a>
+    2008-10-28&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">我是google到这里的。。。
+<br>您对HttpClient 的关闭分析的很透彻
+<br>请教HttpURLConnection和URLConnection怎么关闭链接？
+<br>我需要轮询一个网址，但使用netstat发现很多TIME_WAIT,时间长点后会出现端口都被占用的状况 address already in use :connect，使用HttpURLConnection.disconnect()也没有效果。</div>
+</div>
+
+<div id="bc662586">
+  <div class="comment_title">
+    4 楼
+    <a href="http://fly-ever.iteye.com/" target="_blank" title="fly_ever">fly_ever</a>
+    2008-09-11&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">引用</div><div class="quote_div">
+<br>另外强调一下使用上面这些方法关闭链接是在我们的应用中明确知道不需要重用链接时可以主动关闭链接来释放资源。如果你的应用是需要重用链接的话就没必要这么做，使用原有的链接还可以提供性能。
+<br></div>
+<br>正如你所说，实际上是只有并发量很高的时候才会发生链接占满的情况。
+<br>而如果没有这么高的并发量，我们没必要去实现代码来关闭连接。
+<br>因为我们在代码中实现主动关闭的功能的同时，也丧失了性能上的优势。
+<br>因此，我觉得遇到这种情况，应该把设置中的keepAliveTimeout调低，显得更好一些。
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%201.%20Timeout%2030%20%20%0A%20%20%202.%20KeepAlive%20On%20%20%20%23%E8%A1%A8%E7%A4%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E4%B8%8D%E4%BC%9A%E4%B8%BB%E5%8A%A8%E5%85%B3%E9%97%AD%E9%93%BE%E6%8E%A5%20%20%0A%20%20%203.%20MaxKeepAliveRequests%20100%20%20%0A%20%20%204.%20KeepAliveTimeout%20180%20%20%20%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="number">1</span><span>.&nbsp;Timeout&nbsp;</span><span class="number">30</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="number">2</span><span>.&nbsp;KeepAlive&nbsp;On&nbsp;&nbsp;&nbsp;#表示服务器端不会主动关闭链接&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="number">3</span><span>.&nbsp;MaxKeepAliveRequests&nbsp;</span><span class="number">100</span><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="number">4</span><span>.&nbsp;KeepAliveTimeout&nbsp;</span><span class="number">180</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="java" codeable_id="662586" codeable_type="BlogComment" source_url="http://seanhe.iteye.com/blog/234759#bc662586" pre_index="0" title="HttpClient容易忽视的细节——连接关闭" style="display: none;">   1. Timeout 30  
+   2. KeepAlive On   #表示服务器端不会主动关闭链接  
+   3. MaxKeepAliveRequests 100  
+   4. KeepAliveTimeout 180   
+</pre>
+<br>不过，这里提供的HttpClient关闭的详细信息，还是很有价值的。</div>
+</div>
+
+<div id="bc662040">
+  <div class="comment_title">
+    3 楼
+    <a href="http://jorsef.iteye.com/" target="_blank" title="jorsef">jorsef</a>
+    2008-09-10&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">受用，非常感谢</div>
+</div>
+
+<div id="bc657432">
+  <div class="comment_title">
+    2 楼
+    <a href="http://seanhe.iteye.com/" target="_blank" title="SeanHe">SeanHe</a>
+    2008-09-06&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">HttpClient client = new HttpClient(); 如果这样进行实例化，默认使用SimpleHttpConnectionManager作为connection manager，SimpleHttpConnectionManager没有连接池，只管理一个连接</div>
+</div>
+
+<div id="bc657018">
+  <div class="comment_title">
+    1 楼
+    <a href="http://javatestjava.iteye.com/" target="_blank" title="JavaTestJava">JavaTestJava</a>
+    2008-09-05&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">方法二： 
+<br>实例化代码使用：HttpClient client = new HttpClient(); 
+<br>在method.releaseConnection();之后加上 
+<br>Java代码 
+<br>((SimpleHttpConnectionManager)client.getHttpConnectionManager()).shutdown();&nbsp; 
+<br>
+<br>((SimpleHttpConnectionManager)client.getHttpConnectionManager()).shutdown();
+<br>shutdown源代码很简单，看了一目了然 
+<br>Java代码 
+<br>public void shutdown() {&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp; httpConnection.close();&nbsp;&nbsp; 
+<br>}&nbsp; 
+<br>
+<br>public void shutdown() {
+<br>&nbsp;&nbsp;&nbsp; httpConnection.close();
+<br>}
+<br>
+<br>方法二中的httpConnection.close();这里没有参数么?
+<br>httpConnection为默认全局的那个连接?
+<br></div>
+</div>
+
+
+    
+    
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <p style="text-align:center; margin-top:30px;margin-bottom:0px;"><a href="http://seanhe.iteye.com/login" style="background-color:white;"> <img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/login_icon.png" style="vertical-align:middle; margin-right: 10px;"></a><a href="http://seanhe.iteye.com/login">  您还没有登录,请您登录后再发表评论 </a></p>
+      </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 234759;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', 'HttpClient容易忽视的细节——连接关闭');
+  });
+
+  fix_image_size($$('div.blog_content img'), 700);
+
+  function processComment() {
+    $$('#main .blog_comment > div').each(function(comment){// comment
+      var post_id = comment.id.substr(2);
+      $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+        var location = window.location;
+        source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+        source_url += "#" + comment.id;
+        pre.writeAttribute('codeable_id', post_id);
+        pre.writeAttribute('codeable_type', "BlogComment");
+        pre.writeAttribute('source_url', source_url);
+        pre.writeAttribute('pre_index', index);
+        pre.writeAttribute('title', 'HttpClient容易忽视的细节——连接关闭');
+      });
+    });
+  }
+
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  code_favorites_init();
+  processComment();
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+  <div id="blog_owner_logo"><a href="http://seanhe.iteye.com/"><img alt="SeanHe的博客" class="logo" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/33c75a92-d0d7-3812-b8cb-947cf9dba32b.jpg" title="SeanHe的博客: 修炼中。。。" width=""></a></div>
+  <div id="blog_owner_name">SeanHe</div>
+</div>
+
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 168609 次</li>
+              <li>性别: <img alt="Icon_minigender_1" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/icon_minigender_1.gif" title="男"></li>
+              <li>来自: 杭州</li>
+              <li><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/offline.gif"></li>
+              
+            </ul>
+          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style="font-weight:normal;font-size:12px;padding-left:30px;"><a href="http://seanhe.iteye.com/blog/user_visits">更多访客&gt;&gt;</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://dinghuid.iteye.com/" target="_blank"><img alt="dinghuid的博客" class="logo" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/user-logo-thumb.gif" title="dinghuid的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://dinghuid.iteye.com/" target="_blank" title="dinghuid">dinghuid</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://edwin-dp.iteye.com/" target="_blank"><img alt="edwin_dp的博客" class="logo" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/23222785-1838-3a2a-a603-7a38ddbeacad-thumb.jpg" title="edwin_dp的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://edwin-dp.iteye.com/" target="_blank" title="edwin_dp">edwin_dp</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://rx78zlm1984.iteye.com/" target="_blank"><img alt="rx78zlm1984的博客" class="logo" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/user-logo-thumb.gif" title="rx78zlm1984的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://rx78zlm1984.iteye.com/" target="_blank" title="rx78zlm1984">rx78zlm1984</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://hexiao8832.iteye.com/" target="_blank"><img alt="hexiao8832的博客" class="logo" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/user-logo-thumb.gif" title="hexiao8832的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://hexiao8832.iteye.com/" target="_blank" title="hexiao8832">hexiao8832</a></div>
+              </div>
+            
+          </div>
+
+          
+
+                      <div id="blog_menu">
+              <h5>文章分类</h5>
+              <ul>
+                <li><a href="http://seanhe.iteye.com/">全部博客 (25)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/27923">java (14)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/35829">linux (3)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/68916">js (2)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/127396">REST&amp;ROA (1)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/133802">Apache (2)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/142009">Scala (2)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/143153">Eclipse (1)</a></li>
+                
+                  <li><a href="http://seanhe.iteye.com/category/147123">Tomcat (0)</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>社区版块</h5>
+              <ul>
+                <li><a href="http://seanhe.iteye.com/blog/news">我的资讯</a> (0)</li>
+                <li>
+                  <a href="http://seanhe.iteye.com/blog/post">我的论坛</a> (69)
+                </li>
+                <li><a href="http://seanhe.iteye.com/blog/answered_problems">我的问答</a> (3)</li>
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档分类</h5>
+              <ul>
+                
+                  <li><a href="http://seanhe.iteye.com/blog/monthblog/2011-07">2011-07</a> (2)</li>
+                
+                  <li><a href="http://seanhe.iteye.com/blog/monthblog/2011-03">2011-03</a> (2)</li>
+                
+                  <li><a href="http://seanhe.iteye.com/blog/monthblog/2011-02">2011-02</a> (3)</li>
+                
+                <li><a href="http://seanhe.iteye.com/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+
+            <div id="guest_books">
+              <h5>最新评论</h5>
+              <ul>
+                
+                <li>
+                  <a href="http://wizard-hu.iteye.com/" target="_blank" title="wizard_hu">wizard_hu</a>： 
+                  [i]引用[img][url][flash=200,200][ ...<br>
+                  <a href="http://seanhe.iteye.com/blog/898277#bc2389108">使用Eclipse Memory Analyzer进行内存泄漏分析三部曲</a>
+                </li>
+                
+                <li>
+                  <a href="http://louwenlong.iteye.com/" target="_blank" title="可爱的小狗">可爱的小狗</a>： 
+                  学习了&nbsp;&nbsp;<br>
+                  <a href="http://seanhe.iteye.com/blog/234759#bc2389026">HttpClient容易忽视的细节——连接关闭</a>
+                </li>
+                
+                <li>
+                  <a href="http://xiajunhust.iteye.com/" target="_blank" title="xiajunhust">xiajunhust</a>： 
+                  sqtds 写道文章写的很好，浅显易懂！！！com.taoba ...<br>
+                  <a href="http://seanhe.iteye.com/blog/898277#bc2387958">使用Eclipse Memory Analyzer进行内存泄漏分析三部曲</a>
+                </li>
+                
+                <li>
+                  <a href="http://zhylandroid.iteye.com/" target="_blank" title="zhylandroid">zhylandroid</a>： 
+                  &nbsp;&nbsp;<br>
+                  <a href="http://seanhe.iteye.com/blog/898277#bc2374365">使用Eclipse Memory Analyzer进行内存泄漏分析三部曲</a>
+                </li>
+                
+                <li>
+                  <a href="http://dsjt.iteye.com/" target="_blank" title="dsjt">dsjt</a>： 
+                  悲剧啊，google code 被墙了<br>
+                  <a href="http://seanhe.iteye.com/blog/1131285#bc2351607">mybatis3分表插件shardbatis 2.0</a>
+                </li>
+                
+              </ul>
+            </div>
+
+            <div class="local_bottom"></div>
+          
+        </div>
+        <div style="margin-top: 10px;float: left;clear: left;">
+					<div class="J_adv" data-view="true" data-mod="ad_popu_185" data-mtp="36" data-order="92" data-con="ad_content_1129" style="width: 200px; height: 200px;"><!-- 广告占位容器 --><div id="cpro_u2720202" style="width: 200px; height: 200px; display: inline-block;"><iframe id="iframeu2720202_0" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm(3).html" width="200" height="200" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div><!-- 投放代码 --><script type="text/javascript">(window['cproStyleApi'] = window['cproStyleApi'] ||{})['u2720202']={at:'3',rsi0:'200',rsi1:'200',pat:'6',tn:'baiduCustNativeAD',rss1:'#FFFFFF',conBW:'1',adp:'1',ptt:'0',titFF:'%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91',titFS:'',rss2:'#000000',titSU:'0',ptbg:'90',piw:'0',pih:'0',ptp:'0'};/*服务器频道首页置顶Banner960*90，创建于2014-7-3*/(window.cproArray = window.cproArray || []).push({id:'u2720202'});  </script>  <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/c.js.下载" type="text/javascript"></script></div>
+				</div>
+      </div>    
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br>
+          © 2003-2016 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+        <div class="J_adv" data-view="true" data-mod="ad_popu_186" data-mtp="40" data-order="92" data-con="ad_content_1132" style="width: 1px; height: 1px; position: fixed; right: 10px; bottom: 10px; z-index: 999; background-color: transparent;"><div id="location_parent"></div><script>document.getElementById('location_parent').parentNode.style.height='1px';document.getElementById('location_parent').parentNode.style.width='1px';document.getElementById('location_parent').parentNode.style.position='fixed';document.getElementById('location_parent').parentNode.style.right='10px';document.getElementById('location_parent').parentNode.style.bottom='10px';document.getElementById('location_parent').parentNode.style.zIndex=999;document.getElementById('location_parent').parentNode.style.backgroundColor='transparent';</script><!-- 广告占位容器 --><div id="cpro_u2720296" style="box-sizing: content-box; width: 311px; height: 286px; overflow: hidden; z-index: 2147483647; position: fixed; bottom: 10px; right: 10px;"><div style="box-sizing: content-box;width:300px;height:250px;padding:4px;border:#acacac 1px solid;overflow:hidden;position:absolute;left:0;top:25px;"><iframe id="iframeu2720296_0" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/pcsm(4).html" width="300" height="250" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div><div id="cpro_u2720296_closebtn" style="box-sizing: content-box;position:absolute;width:61px;height:20px;top:0;left:250px;margin:0;padding:0;margin-bottom:5px;cursor:pointer;overflow:hidden;"><div style="box-sizing: content-box;width:40px;height:20px;background-color:#999999;color:#fff;float:left;margin-right:1px;font-size:12px;font-family:微软雅黑;text-align: center;line-height:20px;">关闭</div><a style="maring:0;padding:0;display:inline-block;border:none;overflow:hidden;height:20px;line-height:20px;cursor:pointer;width:20px;background:url(&#39;https://cpro.baidustatic.com/cpro/ui/noexpire/img/2.0.1/xuanfu_close.png&#39;) no-repeat 0 0;margin-bottom:3px;float:left"></a></div></div><!-- 投放代码 --><script type="text/javascript">(window['cproStyleApi'] = window['cproStyleApi'] || {})['u2720296']={at:'3',rsi0:'300',rsi1:'250',pat:'17',tn:'baiduCustNativeAD_xuanfu',rss1:'#FFFFFF',conBW:'1',adp:'1',ptt:'0',titFF:'%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91',titFS:'14',rss2:'#000000',titSU:'0'};/*服务器频道首页置顶Banner960*90，创建于2014-7-3*/(window.cproArray = window.cproArray || []).push({id:'u2720296'});  </script>  <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/f.js.下载" type="text/javascript"></script></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=' width='0' height='0' />");
+</script><img src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/saved_resource" width="0" height="0">
+
+<script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/tracking.js.下载" type="text/javascript"></script>
+
+    
+    
+    <script language="javascript" type="text/javascript" src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/async_new.js.下载"></script>
+<script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/jquery-1.11.1.min.js.下载" type="text/javascript"></script>
+<script type="text/javascript">var $csdn_iteye_jq = jQuery.noConflict();// 解决jq与prototype.js命名空间冲突的问题</script>
+<script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/tracking.js(1).下载" type="text/javascript"></script>
+    
+	    
+	    <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/web-storage-cache.min.js.下载" type="text/javascript"></script>
+	    <script src="./HttpClient容易忽视的细节——连接关闭 - 修炼中。。。 - ITeye技术网站_files/replace.min.js.下载" type="text/javascript"></script>
+    
+    
+  
+
+</body></html>

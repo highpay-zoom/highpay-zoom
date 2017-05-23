@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/bundle-ClearScreen01.css">
+<link type="text/css" rel="stylesheet" href="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/80401.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/bundle-ClearScreen01-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/fishtreeyu/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/fishtreeyu/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/fishtreeyu/wlwmanifest.xml">
+<script src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'fishtreeyu', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="header">
+	
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/fishtreeyu/">ヤ第②⑨號座位ヾ</a><br>
+		不抱怨，不发怒，不悲观，不浮躁，不放弃，要努力，要自信，要坚持．．．踏踏实实过好每一天！
+	</div>
+</div>
+
+</div>
+<div id="mylinks">
+<!--done-->
+<a id="blog_nav_sitehome" class="listitem" href="http://www.cnblogs.com/">博客园</a>&nbsp;&nbsp;::&nbsp;
+<a id="blog_nav_myhome" class="listitem" href="http://www.cnblogs.com/fishtreeyu/">首页</a>&nbsp;&nbsp;::&nbsp;
+<a id="blog_nav_newpost" class="listitem" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a>&nbsp;&nbsp;::&nbsp;
+<a id="blog_nav_contact" accesskey="9" class="listitem" rel="nofollow" href="https://msg.cnblogs.com/send/%E5%A2%9F%E9%9B%B6">联系</a>&nbsp;&nbsp;::&nbsp;
+<a id="blog_nav_rss" class="listitem" href="http://www.cnblogs.com/fishtreeyu/rss">订阅</a>&nbsp;<a id="blog_nav_rss_image" href="http://www.cnblogs.com/fishtreeyu/rss"><img src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/xml.gif" alt="订阅"></a>&nbsp;&nbsp;::&nbsp;
+<a id="blog_nav_admin" class="listitem" rel="nofollow" href="https://i.cnblogs.com/">管理</a>
+</div>
+<div id="mytopmenu">
+	
+		<div id="mystats">
+			<div id="blog_stats">
+<!--done-->
+<div class="blogStats">
+posts - 102,&nbsp;
+comments - 101,&nbsp;
+trackbacks - 0
+
+</div></div></div>
+	
+</div>
+<div id="main">
+    <div id="leftcontent">
+	    
+		    <div id="leftcontentcontainer">
+			    
+			    <div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2016/10/01&#39;);return false;">&lt;</a></td><td align="center">2016年11月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2016/12/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td align="center">1</td><td align="center">2</td><td align="center">3</td><td align="center">4</td><td class="CalWeekendDay" align="center">5</td></tr><tr><td class="CalWeekendDay" align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td class="CalWeekendDay" align="center">12</td></tr><tr><td class="CalWeekendDay" align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center">16</td><td align="center">17</td><td align="center">18</td><td class="CalWeekendDay" align="center">19</td></tr><tr><td class="CalWeekendDay" align="center">20</td><td align="center">21</td><td align="center">22</td><td class="CalTodayDay" align="center">23</td><td align="center">24</td><td align="center">25</td><td class="CalWeekendDay" align="center">26</td></tr><tr><td class="CalWeekendDay" align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td></tr><tr><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td><td class="CalOtherMonthDay" align="center">10</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			    <div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_recentposts" class="sidebar-block">
+<h3 class="catListTitle">最新随笔</h3>
+<div class="RecentComment" id="RecentPosts">
+<ul style="word-break:break-all">
+<li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/12/29/2306186.html">1. JS操作JSON总结</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/27/2265023.html">2. VS2008 Debug与Release的本质区别（转）</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/09/2243428.html">3. JS获取浏览器及屏幕高度和宽度等信息</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/05/2237190.html">4. 用Js的eval解析JSON中的注意点</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/02/2233185.html">5. 把一个数据库中的一个表数据迁移到另一个数据库的相同结构的表中</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/19/2217125.html">6. SQL替换语句 批量修改、增加、删除字段内容</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html">7. 运用JS设置cookie、读取cookie、删除cookie</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2199985.html">8. c#.net在WEB页中设置COOKIES</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/09/19/2181606.html">9. 解读当下最有效的SEO排名策略</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/09/14/2176417.html">10. 网站被降权后怎么办？</a></li>
+</ul>
+</div>
+</div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<!--done-->
+
+		<h1 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(104)</span></h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_0" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/289369.html">.Net MVC备忘录(1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_1" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/277228.html">.Net备忘录(42)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_2" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/277350.html">JavaScript备忘录(14)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_3" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/277337.html">MSSQL备忘录(4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_4" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/298330.html">SEO(18)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_5" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/287608.html">Web前端开发(10)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_6" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/298329.html">电子商务(8)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_7" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/285945.html">记录实践中的错误(1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_8" class="listitem" href="http://www.cnblogs.com/fishtreeyu/category/298332.html">推广运营(6)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(102)</span></h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_0" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/12.html">2011年12月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_1" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/11.html">2011年11月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_2" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/10.html">2011年10月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_3" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/09.html">2011年9月 (10)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_4" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/07.html">2011年7月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_5" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/06.html">2011年6月 (9)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_6" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/05.html">2011年5月 (19)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_7" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/03.html">2011年3月 (17)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_8" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/02.html">2011年2月 (11)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_9" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2011/01.html">2011年1月 (14)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_10" class="listitem" href="http://www.cnblogs.com/fishtreeyu/archive/2010/12.html">2010年12月 (11)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">链接</h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_2_Link_0" class="listitem" href="http://www.maidq.com/" rel="nofollow" target="_blank">普家欢电器网</a></li>
+			<li class="c_b_p_link_desc">品牌电视 正品行货 性价比高</li>
+				</ul>
+			
+	
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<h3 class="catListTitle">最新评论</h3>
+<div class="RecentComment" id="RecentComments">
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#3556066">1. Re:运用JS设置cookie、读取cookie、删除cookie</a></li>
+        <li class="recent_comment_body">function setCookie(name,value) { var Days = 30; var exp = new Date(); exp.setTime(exp.ge......</li>
+        <li class="recent_comment_author">--Amy-WebFrontEnd</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html#3530584">2. Re:用JS获取地址栏参数的方法（超级简单）</a></li>
+        <li class="recent_comment_body">7777777777</li>
+        <li class="recent_comment_author">--Shawn_liu</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html#3500990">3. Re:用JS获取地址栏参数的方法（超级简单）</a></li>
+        <li class="recent_comment_body">亲测无效~~</li>
+        <li class="recent_comment_author">--陶中马</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/05/2237190.html#3487404">4. Re:用Js的eval解析JSON中的注意点</a></li>
+        <li class="recent_comment_body">闭包的写法应该是：(function(){}){}...</li>
+        <li class="recent_comment_author">--牧者</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html#3477741">5. Re:用JS获取地址栏参数的方法（超级简单）</a></li>
+        <li class="recent_comment_body">myurl.toString().length&gt;1<br>这里是&gt;0吧</li>
+        <li class="recent_comment_author">--hengde</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<h3 class="catListTitle">阅读排行榜</h3>
+<div class="RecentComment" id="TopViewPosts"> 
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/03/07/1975613.html">1. js 判断字符串是否包含某字符串,String对象中查找子字符,indexOf(237641)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html">2. 用JS获取地址栏参数的方法（超级简单）(159459)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html">3. 运用JS设置cookie、读取cookie、删除cookie(132705)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/05/2237190.html">4. 用Js的eval解析JSON中的注意点(75008)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/07/14/2106577.html">5. A4宣传单正常规格是210*285mm，每边各留3mm出血位。(34962)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<h3 class="catListTitle">评论排行榜</h3>
+<div class="RecentComment" id="TopCommentsPosts">
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/22/1961514.html">1. 从外部的js文件中获取ASPX页面的服务端控件ClientID(7)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/05/2237190.html">2. 用Js的eval解析JSON中的注意点(7)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html">3. 用JS获取地址栏参数的方法（超级简单）(6)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html">4. 运用JS设置cookie、读取cookie、删除cookie(5)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/03/12/1982067.html">5. js实现网页图片延时加载的原理和代码(5)</a></li></ul></div>
+</div></div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/02/27/1966178.html">1. 用JS获取地址栏参数的方法（超级简单）(12)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/01/15/1936193.html">2. int.Parse()与int.TryParse()(11)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html">3. 运用JS设置cookie、读取cookie、删除cookie(11)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/11/05/2237190.html">4. 用Js的eval解析JSON中的注意点(7)</a></li><li><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/01/17/1937402.html">5. 关于asp.net中页面事件加载的先后顺序(5)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script></div>
+	    
+    </div>
+    <div id="centercontent">
+	    
+<div id="post_detail">
+<!--done-->
+<div class="post">
+	<div class="postTitle">
+		<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html">运用JS设置cookie、读取cookie、删除cookie</a>
+	</div>
+	<div id="cnblogs_post_body"><p>JavaScript是运行在客户端的脚本，因此一般是不能够设置Session的，因为Session是运行在服务器端的。<br><br>而cookie是运行在客户端的，所以可以用JS来设置cookie. <br><br>假设有这样一种情况，在某个用例流程中，由A页面跳至B页面，若在A页面中采用JS用变量temp保存了某一变量的值，在B页面的时候，同样需要使用JS来引用temp的变量值，对于JS中的全局变量或者静态变量的生命周期是有限的，当发生页面跳转或者页面关闭的时候，这些变量的值会重新载入，即没有达到保存的效果。解决这个问题的最好的方案是采用cookie来保存该变量的值，那么如何来设置和读取cookie呢？ <br><br>首先需要稍微了解一下cookie的结构，简单地说：cookie是以键值对的形式保存的，即key=value的格式。各个cookie之间一般是以“;”分隔。 <br><br><strong>JS设置cookie:</strong><br>&nbsp;<br>假设在A页面中要保存变量username的值("jack")到cookie中,key值为name，则相应的JS代码为： <br><br>document.cookie="name="+username;&nbsp; <br><br><strong>JS读取cookie:</strong><br>&nbsp;<br>假设cookie中存储的内容为：name=jack;password=123<br>&nbsp;<br>则在B页面中获取变量username的值的JS代码如下：<br><br>var username=document.cookie.split(";")[0].split("=")[1];&nbsp; <br><br><span style="background-color: #ffffff; color: #800000;"><strong>//JS操作cookies方法!</strong></span> <br><br><strong>//写cookies</strong> <br><br>function setCookie(name,value) <br>{ <br>&nbsp;&nbsp;&nbsp; var Days = 30; <br>&nbsp;&nbsp;&nbsp; var exp = new Date(); <br>&nbsp;&nbsp;&nbsp; exp.setTime(exp.getTime() + Days*24*60*60*1000); <br>&nbsp;&nbsp;&nbsp; document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); <br>} <br><br><strong>//读取cookies</strong> <br>function getCookie(name) <br>{ <br>&nbsp;&nbsp;&nbsp; var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");<br>&nbsp;<br>&nbsp;&nbsp;&nbsp; if(arr=document.cookie.match(reg))<br>&nbsp;<br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return unescape(arr[2]); <br>&nbsp;&nbsp;&nbsp; else <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return null; <br>} <br><br><strong>//删除cookies</strong> <br>function delCookie(name) <br>{ <br>&nbsp;&nbsp;&nbsp; var exp = new Date(); <br>&nbsp;&nbsp;&nbsp; exp.setTime(exp.getTime() - 1); <br>&nbsp;&nbsp;&nbsp; var cval=getCookie(name); <br>&nbsp;&nbsp;&nbsp; if(cval!=null) <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; document.cookie= name + "="+cval+";expires="+exp.toGMTString(); <br>} <br>//使用示例 <br>setCookie("name","hayden"); <br>alert(getCookie("name")); <br><br>//如果需要设定自定义过期时间 <br>//那么把上面的setCookie　函数换成下面两个函数就ok; <br><br><br>//程序代码 <br>function setCookie(name,value,time)<br>{ <br>&nbsp;&nbsp;&nbsp; var strsec = getsec(time); <br>&nbsp;&nbsp;&nbsp; var exp = new Date(); <br>&nbsp;&nbsp;&nbsp; exp.setTime(exp.getTime() + strsec*1); <br>&nbsp;&nbsp;&nbsp; document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); <br>} <br>function getsec(str)<br>{ <br>&nbsp;&nbsp; alert(str); <br>&nbsp;&nbsp; var str1=str.substring(1,str.length)*1; <br>&nbsp;&nbsp; var str2=str.substring(0,1); <br>&nbsp;&nbsp; if (str2=="s")<br>&nbsp;&nbsp; { <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return str1*1000; <br>&nbsp;&nbsp; }<br>&nbsp;&nbsp; else if (str2=="h")<br>&nbsp;&nbsp; { <br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return str1*60*60*1000; <br>&nbsp;&nbsp; }<br>&nbsp;&nbsp; else if (str2=="d")<br>&nbsp;&nbsp; { <br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return str1*24*60*60*1000; <br>&nbsp;&nbsp; } <br>} <br>//这是有设定过期时间的使用示例： <br>//s20是代表20秒 <br>//h是指小时，如12小时则是：h12 <br>//d是天数，30天则：d30 <br><br>setCookie("name","hayden","s20");</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/fishtreeyu/category/277350.html" target="_blank">JavaScript备忘录</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(2200280,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;eb2ae8cb-45f8-df11-ac81-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/fishtreeyu/" target="_blank"><img src="./运用JS设置cookie、读取cookie、删除cookie - 墟零 - 博客园_files/u213433.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/fishtreeyu/">墟零</a><br>
+            <a href="http://home.cnblogs.com/u/fishtreeyu/followees">关注 - 5</a><br>
+            <a href="http://home.cnblogs.com/u/fishtreeyu/followers">粉丝 - 92</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;eb2ae8cb-45f8-df11-ac81-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(2200280,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">11</span>
+    </div>
+    <div class="buryit" onclick="votePost(2200280,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2199985.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2199985.html" title="发布于2011-10-06 16:19">c#.net在WEB页中设置COOKIES</a><br><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/19/2217125.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/19/2217125.html" title="发布于2011-10-19 00:26">SQL替换语句 批量修改、增加、删除字段内容</a><br></div>
+</div>
+
+
+	<div class="postDesc">posted on <span id="post-date">2011-10-06 23:53</span> <a href="http://www.cnblogs.com/fishtreeyu/">墟零</a> 阅读(<span id="post_view_count">132709</span>) 评论(<span id="post_comment_count">5</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=2200280" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#" onclick="AddToWz(2200280);return false;">收藏</a></div>
+</div>
+<script type="text/javascript">var allowComments=true,cb_blogId=80401,cb_entryId=2200280,cb_blogApp=currentBlogApp,cb_blogUserGuid='eb2ae8cb-45f8-df11-ac81-842b2b196315',cb_entryCreatedDate='2011/10/6 23:53:00';loadViewCount(cb_entryId);</script>
+
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<a name="feedback"></a>
+<div class="feedback">
+	<div class="feedbackTitle">
+		Feedback
+	</div>
+	<div class="feedbackNoItems"></div>
+	
+	
+			<div class="feedbackItem">
+				<div class="feedbackListTitle"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#2754799" class="layer">#1楼</a><a name="2754799" id="comment_anchor_2754799"></a></div>
+				<div class="feedbackListSubtitle">
+					 <span class="comment_date">2013-08-19 10:42</span> | <a id="a_comment_author_2754799" href="http://www.cnblogs.com/yuwensong/" target="_blank">wensongyu</a> <a href="http://msg.cnblogs.com/send/wensongyu" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+				</div>
+				<div id="comment_body_2754799" class="blog_comment_body">学习了!</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2754799,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2754799,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2754799_avatar" style="display:none;">http://pic.cnblogs.com/face/u474739.png?id=06130506</span>
+				&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		
+			<div class="feedbackItem">
+				<div class="feedbackListTitle"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#3120131" class="layer">#2楼</a><a name="3120131" id="comment_anchor_3120131"></a></div>
+				<div class="feedbackListSubtitle">
+					 <span class="comment_date">2015-01-30 19:21</span> | <a id="a_comment_author_3120131" href="http://www.cnblogs.com/changekyq/" target="_blank">亦步亦趋</a> <a href="http://msg.cnblogs.com/send/%E4%BA%A6%E6%AD%A5%E4%BA%A6%E8%B6%8B" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+				</div>
+				<div id="comment_body_3120131" class="blog_comment_body">document.cookie.split(";")[0].split("=")[1];  和    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");<br>这两段代码是什么意思啊！！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3120131,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3120131,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3120131_avatar" style="display:none;">http://pic.cnblogs.com/face/718138/20150202224347.png</span>
+				&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		
+			<div class="feedbackItem">
+				<div class="feedbackListTitle"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#3138776" class="layer">#3楼</a><a name="3138776" id="comment_anchor_3138776"></a></div>
+				<div class="feedbackListSubtitle">
+					 <span class="comment_date">2015-03-11 10:54</span> | <a id="a_comment_author_3138776" href="http://home.cnblogs.com/u/729713/" target="_blank">水墨胭脂</a> <a href="http://msg.cnblogs.com/send/%E6%B0%B4%E5%A2%A8%E8%83%AD%E8%84%82" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+				</div>
+				<div id="comment_body_3138776" class="blog_comment_body">学习了，很好，帮到我了，谢谢！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3138776,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3138776,&#39;Bury&#39;,this)">反对(0)</a></div>
+				&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		
+			<div class="feedbackItem">
+				<div class="feedbackListTitle"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#3460319" class="layer">#4楼</a><a name="3460319" id="comment_anchor_3460319"></a></div>
+				<div class="feedbackListSubtitle">
+					 <span class="comment_date">2016-06-28 16:34</span> | <a id="a_comment_author_3460319" href="http://www.cnblogs.com/jq-melody/" target="_blank">JQ(奇想)</a> <a href="http://msg.cnblogs.com/send/JQ%28%E5%A5%87%E6%83%B3%29" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+				</div>
+				<div id="comment_body_3460319" class="blog_comment_body">感谢楼主！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3460319,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3460319,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3460319_avatar" style="display:none;">http://pic.cnblogs.com/face/654488/20150713095821.png</span>
+				&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		
+			<div class="feedbackItem">
+				<div class="feedbackListTitle"><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#3556066" class="layer">#5楼</a><a name="3556066" id="comment_anchor_3556066"></a><span id="comment-maxId" style="display:none;">3556066</span><span id="comment-maxDate" style="display:none;">2016/11/15 11:04:18</span></div>
+				<div class="feedbackListSubtitle">
+					 <span class="comment_date">2016-11-15 11:04</span> | <a id="a_comment_author_3556066" href="http://www.cnblogs.com/loveamyforever/" target="_blank">Amy-WebFrontEnd</a> <a href="http://msg.cnblogs.com/send/Amy-WebFrontEnd" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+				</div>
+				<div id="comment_body_3556066" class="blog_comment_body">function setCookie(name,value) <br>{ <br>    var Days = 30; <br>    var exp = new Date(); <br>    exp.setTime(exp.getTime() + Days*24*60*60*1000); <br>    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); <br>} <br>请问这儿的days=30，说明这个cookie是一个月有效吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3556066,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3556066,&#39;Bury&#39;,this)">反对(0)</a></div>
+				&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		
+</div>
+
+
+<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/fishtreeyu/archive/2011/10/06/2200280.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block"></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/557681/" target="_blank">AWS S3标准存储价格大幅降价28% 可惜中国区不降</a><br> ·  <a href="http://news.cnblogs.com/n/557680/" target="_blank">扳回一局：Oculus Rift可以玩Xbox One游戏啦！</a><br> ·  <a href="http://news.cnblogs.com/n/557679/" target="_blank">扎克伯格的中国梦：Facebook专门为中国做了一款内容审查工具</a><br> ·  <a href="http://news.cnblogs.com/n/557678/" target="_blank">人工智能技术哪家强？外媒评出了这13家公司</a><br> ·  <a href="http://news.cnblogs.com/n/557677/" target="_blank">iPhone 7优惠！ 苹果确认参加黑色星期五促销</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/555750/" target="_blank">循序渐进地代码重构</a><br> ·  <a href="http://kb.cnblogs.com/page/554496/" target="_blank">技术的正宗与野路子</a><br> ·  <a href="http://kb.cnblogs.com/page/553682/" target="_blank">陈皓：什么是工程师文化？</a><br> ·  <a href="http://kb.cnblogs.com/page/551422/" target="_blank">没那么难，谈CSS的设计模式</a><br> ·  <a href="http://kb.cnblogs.com/page/550625/" target="_blank">程序猿媳妇儿注意事项</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+    </div>
+</div>
+
+<!--done-->
+<div class="footer">
+	Powered by: 
+	<br>
+	
+	<a id="Footer1_Hyperlink3" name="Hyperlink1" href="http://www.cnblogs.com/" style="font-family:Verdana;font-size:12px;">博客园</a>
+	<br>
+	Copyright ©2016 墟零
+</div>
+
+
+
+
+</body></html>

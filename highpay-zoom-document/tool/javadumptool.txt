@@ -1,0 +1,10 @@
+0.ps aux|grep 进程名称
+
+1.怎样生产JVM的dump文件
+ jmap -dump:format=b,file=xxx  pid
+
+2.运行java -jar javadumptool.jar
+
+3.open选择生产的dump文件，定位占空间的对象
+
+4.VisualVM 

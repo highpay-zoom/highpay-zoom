@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)http://www.cnblogs.com/davidwang456/p/4318303.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/bundle-arrow.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/bundle-arrow-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/davidwang456/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/davidwang456/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/davidwang456/wlwmanifest.xml">
+<script type="text/javascript" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/encoder.js.下载"></script><script src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/hm.js.下载"></script><script src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'davidwang456', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="header">
+	
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/davidwang456/">一天不进步，就是退步!</a><br>
+		专注但要有大局观（先大后小，思路为先，实验为辅），一个人一生只要做好一件事就够了！记住：凡事预则立，不预则废。
+	</div>
+</div>
+
+</div>
+<div id="mylinks">
+<!--done-->
+<a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a>&nbsp;&nbsp;&nbsp;
+<a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/davidwang456/">首页</a>&nbsp;&nbsp;&nbsp;
+<a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a>&nbsp;&nbsp;&nbsp;
+<a id="blog_nav_contact" accesskey="9" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E4%B8%80%E5%A4%A9%E4%B8%8D%E8%BF%9B%E6%AD%A5%EF%BC%8C%E5%B0%B1%E6%98%AF%E9%80%80%E6%AD%A5">联系</a>&nbsp;&nbsp;&nbsp;
+<a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/davidwang456/rss">订阅</a><a id="blog_nav_rss_image" href="http://www.cnblogs.com/davidwang456/rss"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/xml.gif" alt="订阅"></a>&nbsp;&nbsp;&nbsp;
+<a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a>
+</div>
+<div id="mytopmenu">
+	
+		<div id="blog_stats">
+<div class="blogStats">随笔 - 1224&nbsp;
+文章 - 45&nbsp;评论 - 205&nbsp;trackbacks - 0
+</div></div>
+	
+</div>
+<div id="leftcontent">
+	
+		<div id="leftcontentcontainer">
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2016/10/01&#39;);return false;">&lt;</a></td><td align="center">2016年11月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2016/12/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/01.html"><u>1</u></a></td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/02.html"><u>2</u></a></td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/03.html"><u>3</u></a></td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/04.html"><u>4</u></a></td><td class="CalWeekendDay" align="center">5</td></tr><tr><td class="CalWeekendDay" align="center">6</td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/07.html"><u>7</u></a></td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/08.html"><u>8</u></a></td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td class="CalWeekendDay" align="center">12</td></tr><tr><td class="CalWeekendDay" align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center">16</td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/17.html"><u>17</u></a></td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/18.html"><u>18</u></a></td><td class="CalWeekendDay" align="center">19</td></tr><tr><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/20.html"><u>20</u></a></td><td align="center">21</td><td align="center"><a href="http://www.cnblogs.com/davidwang456/archive/2016/11/22.html"><u>22</u></a></td><td class="CalTodayDay" align="center">23</td><td align="center">24</td><td align="center">25</td><td class="CalWeekendDay" align="center">26</td></tr><tr><td class="CalWeekendDay" align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td></tr><tr><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td><td class="CalOtherMonthDay" align="center">10</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script><br>
+			
+<!--done-->
+<div class="newsItem">
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/davidwang456/">一天不进步，就是退步</a><br>园龄：<a href="http://home.cnblogs.com/u/davidwang456/" title="入园时间：2013-01-04">3年10个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/davidwang456/followers/">465</a><br>关注：<a href="http://home.cnblogs.com/u/davidwang456/followees/">20</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;3183fc7e-1f56-e211-aa8f-842b2b196315&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_toptags" class="sidebar-block">
+<h3 class="catListTitle">我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="http://www.cnblogs.com/davidwang456/tag/extremeComponent%20%20ec%20%20ectable%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">extremeComponent  ec  ectable 源码分析</a>(1)</li><li><a href="http://www.cnblogs.com/davidwang456/tag/spring%20jdbc%20%E6%BA%90%E7%A0%81/">spring jdbc 源码</a>(1)</li><li><a href="http://www.cnblogs.com/davidwang456/tag/spring%20web%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20http%E6%A8%A1%E5%9D%97/">spring web 源码分析 http模块</a>(1)</li>
+</ul>
+</div></div><div id="sidebar_categories">
+<!--done-->
+
+		<h1 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(1200)</span></h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_0" class="listitem" href="http://www.cnblogs.com/davidwang456/category/537904.html">c program(11)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_1" class="listitem" href="http://www.cnblogs.com/davidwang456/category/462408.html">java开发基础(232)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_2" class="listitem" href="http://www.cnblogs.com/davidwang456/category/469778.html">js&amp;jquery(24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_3" class="listitem" href="http://www.cnblogs.com/davidwang456/category/512568.html">linux学习(124)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_4" class="listitem" href="http://www.cnblogs.com/davidwang456/category/530316.html">redis/memcached/mongodb(36)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_5" class="listitem" href="http://www.cnblogs.com/davidwang456/category/780497.html">spark/kafka/akka(4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_6" class="listitem" href="http://www.cnblogs.com/davidwang456/category/838233.html">spring boot/spring cloud笔记(4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_7" class="listitem" href="http://www.cnblogs.com/davidwang456/category/805707.html">spring及其源码分析专辑(79)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_8" class="listitem" href="http://www.cnblogs.com/davidwang456/category/546621.html">TCP/IP协议(8)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_9" class="listitem" href="http://www.cnblogs.com/davidwang456/category/459087.html">tomcat weblogic jboss(69)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_10" class="listitem" href="http://www.cnblogs.com/davidwang456/category/818202.html">VR/AR/MR(1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_11" class="listitem" href="http://www.cnblogs.com/davidwang456/category/459086.html">webservice(6)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_12" class="listitem" href="http://www.cnblogs.com/davidwang456/category/461542.html">安全与测试(50)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_13" class="listitem" href="http://www.cnblogs.com/davidwang456/category/457345.html">程序生活(49)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_14" class="listitem" href="http://www.cnblogs.com/davidwang456/category/539681.html">大数据与云计算(52)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_15" class="listitem" href="http://www.cnblogs.com/davidwang456/category/467021.html">高并发及性能(50)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_16" class="listitem" href="http://www.cnblogs.com/davidwang456/category/530808.html">集群(61)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_17" class="listitem" href="http://www.cnblogs.com/davidwang456/category/448897.html">开源框架(130)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_18" class="listitem" href="http://www.cnblogs.com/davidwang456/category/448898.html">其它(44)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_19" class="listitem" href="http://www.cnblogs.com/davidwang456/category/460787.html">设计模式(28)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_20" class="listitem" href="http://www.cnblogs.com/davidwang456/category/466454.html">数据结构与算法(19)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_21" class="listitem" href="http://www.cnblogs.com/davidwang456/category/448894.html">数据库(71)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_22" class="listitem" href="http://www.cnblogs.com/davidwang456/category/453156.html">系统架构(48)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(1224)</span></h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_0" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/11.html">2016年11月 (16)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_1" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/10.html">2016年10月 (6)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_2" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/09.html">2016年9月 (9)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_3" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/08.html">2016年8月 (14)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_4" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/07.html">2016年7月 (25)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_5" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/06.html">2016年6月 (18)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_6" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/05.html">2016年5月 (21)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_7" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/04.html">2016年4月 (8)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_8" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/03.html">2016年3月 (15)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_9" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/02.html">2016年2月 (6)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_10" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2016/01.html">2016年1月 (20)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_11" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/12.html">2015年12月 (26)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_12" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/11.html">2015年11月 (26)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_13" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/10.html">2015年10月 (22)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_14" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/09.html">2015年9月 (17)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_15" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/08.html">2015年8月 (24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_16" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/07.html">2015年7月 (26)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_17" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/06.html">2015年6月 (20)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_18" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/05.html">2015年5月 (31)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_19" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/04.html">2015年4月 (40)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_20" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/03.html">2015年3月 (24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_21" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/02.html">2015年2月 (24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_22" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2015/01.html">2015年1月 (45)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_23" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/12.html">2014年12月 (36)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_24" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/11.html">2014年11月 (46)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_25" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/10.html">2014年10月 (44)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_26" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/09.html">2014年9月 (30)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_27" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/08.html">2014年8月 (48)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_28" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/07.html">2014年7月 (46)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_29" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/06.html">2014年6月 (40)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_30" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/05.html">2014年5月 (54)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_31" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/04.html">2014年4月 (45)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_32" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/03.html">2014年3月 (53)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_33" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/02.html">2014年2月 (44)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_34" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2014/01.html">2014年1月 (46)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_35" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/12.html">2013年12月 (43)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_36" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/11.html">2013年11月 (39)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_37" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/10.html">2013年10月 (24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_38" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/09.html">2013年9月 (17)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_39" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/08.html">2013年8月 (15)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_40" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/07.html">2013年7月 (5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_41" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/06.html">2013年6月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_42" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/05.html">2013年5月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_43" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/04.html">2013年4月 (22)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_44" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/03.html">2013年3月 (30)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_45" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/02.html">2013年2月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_46" class="listitem" href="http://www.cnblogs.com/davidwang456/archive/2013/01.html">2013年1月 (7)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">文章分类<span style="font-size:11px;font-weight:normal">(33)</span></h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_2_Link_0" class="listitem" href="http://www.cnblogs.com/davidwang456/category/840842.html">机器学习算法(12)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_2_Link_1" class="listitem" href="http://www.cnblogs.com/davidwang456/category/796895.html">聊聊架构(19)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_2_Link_2" class="listitem" href="http://www.cnblogs.com/davidwang456/category/817285.html">人生感悟(2)</a></li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">常用网址</h1>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_0" class="listitem" href="https://github.com/akullpp/awesome-java" rel="nofollow">awesome-java</a></li>
+			<li class="c_b_p_link_desc">A curated list of awesome Java frameworks, libraries and software</li>
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_1" class="listitem" href="http://www.concretepage.com/" rel="nofollow">concretepage</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_2" class="listitem" href="http://www.dzone.com/links/index.html" rel="nofollow">dzone</a></li>
+			<li class="c_b_p_link_desc">blog</li>
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_3" class="listitem" href="http://howtodoinjava.com/" rel="nofollow">java-core</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_4" class="listitem" href="http://martinfowler.com/" rel="nofollow">martinfowler</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_5" class="listitem" href="http://www.mkyong.com/spring/" rel="nofollow">mkyong</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_6" class="listitem" href="http://afoo.me/" rel="nofollow">spring揭秘</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_7" class="listitem" href="http://www.tutorialspoint.com/design_pattern/" rel="nofollow">tutorialspoint</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_3_Link_8" class="listitem" href="http://blog.csdn.net/linghu_java" rel="nofollow">水</a></li>
+			
+				</ul>
+			
+	
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<h3>积分与排名</h3>
+<ul>
+	<li>
+		积分 -
+		746483
+	</li><li>
+		排名 -
+		101
+	</li>
+</ul>
+</div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<h3 class="catListTitle">阅读排行榜</h3>
+<div class="RecentComment" id="TopViewPosts"> 
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/davidwang456/p/4013631.html">1. 基于注解的Spring AOP的配置和使用--转载(37000)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/3915031.html">2. 深入理解maven及应用--转(29990)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/3540837.html">3. iptables详解--转(28479)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/4266867.html">4. Linux curl命令参数详解--转载(19715)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/4354031.html">5. Dubbo入门实例--转载(18131)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/davidwang456/p/5099916.html">1. 在路上---一个平凡人的2015年总结及2016年展望(19)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/4432410.html">2. spring4.x注解概述(7)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/3915031.html">3. 深入理解maven及应用--转(6)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/4205572.html">4. 项目中使用Quartz集群分享--转载(5)</a></li><li><a href="http://www.cnblogs.com/davidwang456/p/4013631.html">5. 基于注解的Spring AOP的配置和使用--转载(5)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script></div>		
+	
+</div>
+<div id="centercontent">
+	
+<div id="post_detail">
+<!--done-->
+<div class="post">
+	<div class="postTitle">
+		<h1><a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/davidwang456/p/4318303.html">Spring(AbstractRoutingDataSource)实现动态数据源切换--转载</a></h1>
+	</div>
+	<div id="cnblogs_post_body"><p><a href="http://linhongyu.blog.51cto.com/6373370/1615895" target="_blank">原始出处</a>：<a href="http://linhongyu.blog.51cto.com/6373370/1615895">http://linhongyu.blog.51cto.com/6373370/1615895</a></p>
+<p>一、前言</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;近期一项目A需实现数据同步到另一项目B数据库中，在不改变B项目的情况下，只好选择项目A中切换数据源，直接把数据写入项目B的数据库中。这种需求，在数据同步与定时任务中经常需要。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;那么问题来了，该如何解决多数据源问题呢？不光是要配置多个数据源，还得能灵活动态的切换数据源。以spring+hibernate框架项目为例（引用：http://blog.csdn.net/wangpeng047/article/details/8866239博客的图片）：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p><a href="http://s3.51cto.com/wyfs02/M02/59/F1/wKioL1TxHqHQ_2EIAAA2t2DPtbc761.jpg" target="_blank"><iframe id="iframe_0.7006323994139374" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/saved_resource.html" style="border: none; width: 374px; height: 46px;" frameborder="0" scrolling="no"></iframe></a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;单个数据源绑定给sessionFactory，再在Dao层操作，若多个数据源的话，那不是就成了下图：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://s3.51cto.com/wyfs02/M01/59/F1/wKioL1TxH1-yOkTCAAB1EzUwMXo661.jpg" target="_blank"><iframe id="iframe_0.5401093866605959" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/saved_resource(1).html" style="border: none; width: 383px; height: 123px;" frameborder="0" scrolling="no"></iframe></a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可见，sessionFactory都写死在了Dao层，若我再添加个数据源的话，则又得添加一个sessionFactory。所以比较好的做法应该是下图：</p>
+<p><a href="http://s3.51cto.com/wyfs02/M00/59/F1/wKioL1TxIC-gAVlAAABpRIiqH-w927.jpg" target="_blank"><iframe id="iframe_0.6995891743249647" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/saved_resource(2).html" style="border: none; width: 561px; height: 136px;" frameborder="0" scrolling="no"></iframe></a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;接下来就为大家讲解下如何用spring来整合这些数据源，同样以spring+hibernate配置为例。</p>
+<p>&nbsp;</p>
+<p>二、实现原理</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;1、扩展Spring的AbstractRoutingDataSource抽象类（该类充当了DataSource的路由中介, 能有在运行时, 根据某种key值来动态切换到真正的DataSource上。）</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;从AbstractRoutingDataSource的源码中：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">abstract</span> <span style="color: #0000ff;">class</span> AbstractRoutingDataSource <span style="color: #0000ff;">extends</span> AbstractDataSource <span style="color: #0000ff;">implements</span> InitializingBean</pre>
+</div>
+<div>&nbsp;</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;我们可以看到，它继承了AbstractDataSource，而AbstractDataSource不就是javax.sql.DataSource的子类，So我们可以分析下它的getConnection方法：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">public</span> Connection getConnection() <span style="color: #0000ff;">throws</span><span style="color: #000000;"> SQLException {  
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> determineTargetDataSource().getConnection();  
+}  
+   
+</span><span style="color: #0000ff;">public</span> Connection getConnection(String username, String password) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> SQLException {  
+     </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> determineTargetDataSource().getConnection(username, password);  
+}</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<div>&nbsp;</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;获取连接的方法中，重点是determineTargetDataSource()方法，看源码：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #008000;">/**</span><span style="color: #008000;"> 
+     * Retrieve the current target DataSource. Determines the 
+     * {</span><span style="color: #808080;">@link</span><span style="color: #008000;"> #determineCurrentLookupKey() current lookup key}, performs 
+     * a lookup in the {</span><span style="color: #808080;">@link</span><span style="color: #008000;"> #setTargetDataSources targetDataSources} map, 
+     * falls back to the specified 
+     * {</span><span style="color: #808080;">@link</span><span style="color: #008000;"> #setDefaultTargetDataSource default target DataSource} if necessary. 
+     * </span><span style="color: #808080;">@see</span><span style="color: #008000;"> #determineCurrentLookupKey() 
+     </span><span style="color: #008000;">*/</span>  
+    <span style="color: #0000ff;">protected</span><span style="color: #000000;"> DataSource determineTargetDataSource() {  
+        Assert.notNull(</span><span style="color: #0000ff;">this</span>.resolvedDataSources, "DataSource router not initialized"<span style="color: #000000;">);  
+        Object lookupKey </span>=<span style="color: #000000;"> determineCurrentLookupKey();  
+        DataSource dataSource </span>= <span style="color: #0000ff;">this</span><span style="color: #000000;">.resolvedDataSources.get(lookupKey);  
+        </span><span style="color: #0000ff;">if</span> (dataSource == <span style="color: #0000ff;">null</span> &amp;&amp; (<span style="color: #0000ff;">this</span>.lenientFallback || lookupKey == <span style="color: #0000ff;">null</span><span style="color: #000000;">)) {  
+            dataSource </span>= <span style="color: #0000ff;">this</span><span style="color: #000000;">.resolvedDefaultDataSource;  
+        }  
+        </span><span style="color: #0000ff;">if</span> (dataSource == <span style="color: #0000ff;">null</span><span style="color: #000000;">) {  
+            </span><span style="color: #0000ff;">throw</span> <span style="color: #0000ff;">new</span> IllegalStateException("Cannot determine target DataSource for lookup key [" + lookupKey + "]"<span style="color: #000000;">);  
+        }  
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> dataSource;  
+    }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<div>&nbsp;</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;上面这段源码的重点在于determineCurrentLookupKey()方法，这是AbstractRoutingDataSource类中的一个抽象方法，而它的返回值是你所要用的数据源dataSource的key值，有了这个key值，resolvedDataSource（这是个map,由配置文件中设置好后存入的）就从中取出对应的DataSource，如果找不到，就用配置默认的数据源。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;看完源码，应该有点启发了吧，没错！你要扩展AbstractRoutingDataSource类，并重写其中的determineCurrentLookupKey()方法，来实现数据源的切换：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.datasource.test.util.database;
+ 
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+ 
+</span><span style="color: #008000;">/**</span><span style="color: #008000;">
+ * 获取数据源（依赖于spring）
+ * </span><span style="color: #808080;">@author</span><span style="color: #008000;"> linhy
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span> DynamicDataSource <span style="color: #0000ff;">extends</span><span style="color: #000000;"> AbstractRoutingDataSource{
+    @Override
+    </span><span style="color: #0000ff;">protected</span><span style="color: #000000;"> Object determineCurrentLookupKey() {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> DataSourceHolder.getDataSource();
+    }
+}</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<div>&nbsp;</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;DataSourceHolder这个类则是我们自己封装的对数据源进行操作的类：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.datasource.test.util.database;
+ 
+</span><span style="color: #008000;">/**</span><span style="color: #008000;">
+ * 数据源操作
+ * </span><span style="color: #808080;">@author</span><span style="color: #008000;"> linhy
+ </span><span style="color: #008000;">*/</span>
+<span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DataSourceHolder {
+    </span><span style="color: #008000;">//</span><span style="color: #008000;">线程本地环境</span>
+    <span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">final</span> ThreadLocal&lt;String&gt; dataSources = <span style="color: #0000ff;">new</span> ThreadLocal&lt;String&gt;<span style="color: #000000;">();
+    </span><span style="color: #008000;">//</span><span style="color: #008000;">设置数据源</span>
+    <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> setDataSource(String customerType) {
+        dataSources.set(customerType);
+    }
+    </span><span style="color: #008000;">//</span><span style="color: #008000;">获取数据源</span>
+    <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span><span style="color: #000000;"> String getDataSource() {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> (String) dataSources.get();
+    }
+    </span><span style="color: #008000;">//</span><span style="color: #008000;">清除数据源</span>
+    <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> clearDataSource() {
+        dataSources.remove();
+    }
+ 
+}</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<div>&nbsp;</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;2、有人就要问，那你setDataSource这方法是要在什么时候执行呢？当然是在你需要切换数据源的时候执行啦。手动在代码中调用写死吗？这是多蠢的方法，当然要让它动态咯。所以我们可以应用spring aop来设置，把配置的数据源类型都设置成为注解标签，在service层中需要切换数据源的方法上，写上注解标签，调用相应方法切换数据源咯（就跟你设置事务一样）：</p>
+<div class="cnblogs_code">
+<pre>@DataSource(name=<span style="color: #000000;">DataSource.slave1)
+</span><span style="color: #0000ff;">public</span> List getProducts(){</pre>
+</div>
+<p><span style="font-size: 14px; line-height: 1.5;">&nbsp;当然，注解标签的用法可能很少人用到，但它可是个好东西哦，大大的帮助了我们开发：</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.datasource.test.util.database;
+ 
+</span><span style="color: #0000ff;">import</span> java.lang.annotation.*<span style="color: #000000;">;
+ 
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+</span><span style="color: #0000ff;">public</span> @<span style="color: #0000ff;">interface</span><span style="color: #000000;"> DataSource {
+    String name() </span><span style="color: #0000ff;">default</span><span style="color: #000000;"> DataSource.master;
+ 
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> String master = "dataSource1"<span style="color: #000000;">;
+ 
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> String slave1 = "dataSource2"<span style="color: #000000;">;
+ 
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> String slave2 = "dataSource3"<span style="color: #000000;">;
+ 
+}</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>三、配置文件</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;为了精简篇幅，省略了无关本内容主题的配置。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;项目中单独分离出application-database.xml，关于数据源配置的文件。</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">&lt;?</span><span style="color: #ff00ff;">xml version="1.0" encoding="UTF-8"</span><span style="color: #0000ff;">?&gt;</span>
+<span style="color: #008000;">&lt;!--</span><span style="color: #008000;"> Spring 数据库相关配置 放在这里 </span><span style="color: #008000;">--&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">beans </span><span style="color: #ff0000;">xmlns</span><span style="color: #0000ff;">="http://www.springframework.org/schema/beans"</span><span style="color: #ff0000;">
+       xmlns:xsi</span><span style="color: #0000ff;">="http://www.w3.org/2001/XMLSchema-instance"</span><span style="color: #ff0000;">
+       xmlns:aop</span><span style="color: #0000ff;">="http://www.springframework.org/schema/aop"</span><span style="color: #ff0000;">
+       xmlns:tx</span><span style="color: #0000ff;">="http://www.springframework.org/schema/tx"</span><span style="color: #ff0000;">
+       xsi:schemaLocation</span><span style="color: #0000ff;">="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id </span><span style="color: #0000ff;">= "dataSource1"</span><span style="color: #ff0000;"> class </span><span style="color: #0000ff;">= "com.mysql.jdbc.jdbc2.optional.MysqlDataSource"</span><span style="color: #0000ff;">&gt;</span>   
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="url"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="${db1.url}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "user"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db1.user}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "password"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db1.pwd}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="autoReconnect"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="useUnicode"</span><span style="color: #ff0000;">  value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="characterEncoding"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="UTF-8"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id </span><span style="color: #0000ff;">= "dataSource2"</span><span style="color: #ff0000;"> class </span><span style="color: #0000ff;">= "com.mysql.jdbc.jdbc2.optional.MysqlDataSource"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="url"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="${db2.url}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "user"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db2.user}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "password"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db2.pwd}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="autoReconnect"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="useUnicode"</span><span style="color: #ff0000;">  value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="characterEncoding"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="UTF-8"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id </span><span style="color: #0000ff;">= "dataSource3"</span><span style="color: #ff0000;"> class </span><span style="color: #0000ff;">= "com.mysql.jdbc.jdbc2.optional.MysqlDataSource"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="url"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="${db3.url}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "user"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db3.user}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name </span><span style="color: #0000ff;">= "password"</span><span style="color: #ff0000;"> value </span><span style="color: #0000ff;">= "${db3.pwd}"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="autoReconnect"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="useUnicode"</span><span style="color: #ff0000;">  value</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="characterEncoding"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="UTF-8"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #008000;">&lt;!--</span><span style="color: #008000;"> 配置多数据源映射关系 </span><span style="color: #008000;">--&gt;</span>
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="dataSource"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="com.datasource.test.util.database.DynamicDataSource"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="targetDataSources"</span><span style="color: #0000ff;">&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">map </span><span style="color: #ff0000;">key-type</span><span style="color: #0000ff;">="java.lang.String"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">entry </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="dataSource1"</span><span style="color: #ff0000;"> value-ref</span><span style="color: #0000ff;">="dataSource1"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">entry</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">entry </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="dataSource2"</span><span style="color: #ff0000;"> value-ref</span><span style="color: #0000ff;">="dataSource2"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">entry</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">entry </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="dataSource3"</span><span style="color: #ff0000;"> value-ref</span><span style="color: #0000ff;">="dataSource3"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">entry</span><span style="color: #0000ff;">&gt;</span>
+            <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">map</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">property</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #008000;">&lt;!--</span><span style="color: #008000;"> 默认目标数据源为你主库数据源 </span><span style="color: #008000;">--&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="defaultTargetDataSource"</span><span style="color: #ff0000;"> ref</span><span style="color: #0000ff;">="dataSource1"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="sessionFactoryHibernate"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="org.springframework.orm.hibernate3.LocalSessionFactoryBean"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="dataSource"</span><span style="color: #ff0000;"> ref</span><span style="color: #0000ff;">="dataSource"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="hibernateProperties"</span><span style="color: #0000ff;">&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">props</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.dialect"</span><span style="color: #0000ff;">&gt;</span>com.datasource.test.util.database.ExtendedMySQLDialect<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.show_sql"</span><span style="color: #0000ff;">&gt;</span>${SHOWSQL}<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.format_sql"</span><span style="color: #0000ff;">&gt;</span>${SHOWSQL}<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="query.factory_class"</span><span style="color: #0000ff;">&gt;</span>org.hibernate.hql.classic.ClassicQueryTranslatorFactory<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.connection.provider_class"</span><span style="color: #0000ff;">&gt;</span>org.hibernate.connection.C3P0ConnectionProvider<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.max_size"</span><span style="color: #0000ff;">&gt;</span>30<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.min_size"</span><span style="color: #0000ff;">&gt;</span>5<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.timeout"</span><span style="color: #0000ff;">&gt;</span>120<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.idle_test_period"</span><span style="color: #0000ff;">&gt;</span>120<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.acquire_increment"</span><span style="color: #0000ff;">&gt;</span>2<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.validate"</span><span style="color: #0000ff;">&gt;</span>true<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+                <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">prop </span><span style="color: #ff0000;">key</span><span style="color: #0000ff;">="hibernate.c3p0.max_statements"</span><span style="color: #0000ff;">&gt;</span>100<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">prop</span><span style="color: #0000ff;">&gt;</span>
+            <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">props</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">property</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="hibernateTemplate"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="org.springframework.orm.hibernate3.HibernateTemplate"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="sessionFactory"</span><span style="color: #ff0000;"> ref</span><span style="color: #0000ff;">="sessionFactoryHibernate"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="dataSourceExchange"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="com.datasource.test.util.database.DataSourceExchange"</span><span style="color: #0000ff;">/&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">bean </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="transactionManager"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="org.springframework.orm.hibernate3.HibernateTransactionManager"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">property </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="sessionFactory"</span><span style="color: #ff0000;"> ref</span><span style="color: #0000ff;">="sessionFactoryHibernate"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">bean</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:advice </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="txAdvice"</span><span style="color: #ff0000;"> transaction-manager</span><span style="color: #0000ff;">="transactionManager"</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:attributes</span><span style="color: #0000ff;">&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="insert*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="add*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="update*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="modify*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="edit*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="del*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="save*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="send*"</span><span style="color: #ff0000;"> propagation</span><span style="color: #0000ff;">="NESTED"</span><span style="color: #ff0000;"> rollback-for</span><span style="color: #0000ff;">="Exception"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="get*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="find*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="query*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="search*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="select*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+            <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tx:method </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="count*"</span><span style="color: #ff0000;"> read-only</span><span style="color: #0000ff;">="true"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">tx:attributes</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">tx:advice</span><span style="color: #0000ff;">&gt;</span>
+ 
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">aop:config</span><span style="color: #0000ff;">&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">aop:pointcut </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="service"</span><span style="color: #ff0000;"> expression</span><span style="color: #0000ff;">="execution(* com.datasource..*.service.*.*(..))"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #008000;">&lt;!--</span><span style="color: #008000;"> 关键配置，切换数据源一定要比持久层代码更先执行（事务也算持久层代码） </span><span style="color: #008000;">--&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">aop:advisor </span><span style="color: #ff0000;">advice-ref</span><span style="color: #0000ff;">="txAdvice"</span><span style="color: #ff0000;"> pointcut-ref</span><span style="color: #0000ff;">="service"</span><span style="color: #ff0000;"> order</span><span style="color: #0000ff;">="2"</span><span style="color: #0000ff;">/&gt;</span>
+        <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">aop:advisor </span><span style="color: #ff0000;">advice-ref</span><span style="color: #0000ff;">="dataSourceExchange"</span><span style="color: #ff0000;"> pointcut-ref</span><span style="color: #0000ff;">="service"</span><span style="color: #ff0000;"> order</span><span style="color: #0000ff;">="1"</span><span style="color: #0000ff;">/&gt;</span>
+    <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">aop:config</span><span style="color: #0000ff;">&gt;</span>
+ 
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">beans</span><span style="color: #0000ff;">&gt;</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>四、疑问</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;多数据源切换是成功了，但牵涉到事务呢？单数据源事务是ok的，但如果多数据源需要同时使用一个事务呢？这个问题有点头大，网络上有人提出用atomikos开源项目实现JTA分布式事务处理。你怎么看？</p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/davidwang456/category/448897.html" target="_blank">开源框架</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4318303,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;3183fc7e-1f56-e211-aa8f-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/davidwang456/" target="_blank"><img src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/20141112115754.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/davidwang456/">一天不进步，就是退步</a><br>
+            <a href="http://home.cnblogs.com/u/davidwang456/followees">关注 - 20</a><br>
+            <a href="http://home.cnblogs.com/u/davidwang456/followers">粉丝 - 465</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;3183fc7e-1f56-e211-aa8f-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(4318303,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">3</span>
+    </div>
+    <div class="buryit" onclick="votePost(4318303,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/davidwang456/p/4314313.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/davidwang456/p/4314313.html" title="发布于2015-03-04 21:06">springMVC项目在jboss7中配置应用自己的log4j--转载</a><br><a href="http://www.cnblogs.com/davidwang456/p/4329860.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/davidwang456/p/4329860.html" title="发布于2015-03-11 14:41">How to Map Distinct Value Types Using Java Generics--reference</a><br></div>
+</div>
+
+
+	<div class="postDesc">posted on <span id="post-date">2015-03-06 15:09</span> <a href="http://www.cnblogs.com/davidwang456/">一天不进步，就是退步</a> 阅读(<span id="post_view_count">14324</span>) 评论(<span id="post_comment_count">8</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=4318303" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/davidwang456/p/4318303.html#" onclick="AddToWz(4318303);return false;">收藏</a></div>
+</div>
+<script type="text/javascript">var allowComments=true,cb_blogId=138600,cb_entryId=4318303,cb_blogApp=currentBlogApp,cb_blogUserGuid='3183fc7e-1f56-e211-aa8f-842b2b196315',cb_entryCreatedDate='2015/3/6 15:09:00';loadViewCount(cb_entryId);</script>
+
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<br>
+<b>FeedBack:</b>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3367376" class="layer">#1楼</a><a name="3367376" id="comment_anchor_3367376"></a>&nbsp; <span class="comment_date">2016-02-26 16:31</span>&nbsp;<a id="a_comment_author_3367376" href="http://www.cnblogs.com/silymer/" target="_blank">silymer</a> <a href="http://msg.cnblogs.com/send/silymer" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3367376" class="blog_comment_body">四、疑问<br><br>    多数据源切换是成功了，但牵涉到事务呢？单数据源事务是ok的，但如果多数据源需要同时使用一个事务呢？这个问题有点头大，网络上有人提出用atomikos开源项目实现JTA分布式事务处理。你怎么看？<br><br><br>的确是个问题，的确头大，正在头大中。。。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3367376,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3367376,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3367376_avatar" style="display:none;">http://pic.cnblogs.com/face/388064/20141209104151.png</span>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3369064" class="layer">#2楼</a><a name="3369064" id="comment_anchor_3369064"></a>[<span class="louzhu">楼主</span>]&nbsp; <span class="comment_date">2016-03-01 08:49</span>&nbsp;<a id="a_comment_author_3369064" href="http://www.cnblogs.com/davidwang456/" target="_blank">一天不进步，就是退步</a> <a href="http://msg.cnblogs.com/send/%E4%B8%80%E5%A4%A9%E4%B8%8D%E8%BF%9B%E6%AD%A5%EF%BC%8C%E5%B0%B1%E6%98%AF%E9%80%80%E6%AD%A5" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3369064" class="blog_comment_body"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3367376" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3367376);">@</a>
+silymer<br>最好不要使用atomikos类似的做jta分布式事务处理，最好可以通过mq来做异步的补偿。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3369064,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3369064,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3369064_avatar" style="display:none;">http://pic.cnblogs.com/face/486074/20141112115754.png</span>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3404090" class="layer">#3楼</a><a name="3404090" id="comment_anchor_3404090"></a>&nbsp; <span class="comment_date">2016-04-09 19:59</span>&nbsp;<a id="a_comment_author_3404090" href="http://home.cnblogs.com/u/932517/" target="_blank">月上柳梢</a> <a href="http://msg.cnblogs.com/send/%E6%9C%88%E4%B8%8A%E6%9F%B3%E6%A2%A2" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3404090" class="blog_comment_body">你好，博主，目前在学习SSI框架的多数据连接，看你文档写的很详细，但看过后有个地方不是很清楚，  能把 &lt;bean id="dataSourceExchange" class="com.datasource.test.util.database.DataSourceExchange"/&gt;  DataSourceExchange这个类的代码也发出来一下吗？谢谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3404090,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3404090,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3404092" class="layer">#4楼</a><a name="3404092" id="comment_anchor_3404092"></a>&nbsp; <span class="comment_date">2016-04-09 20:01</span>&nbsp;<a id="a_comment_author_3404092" href="http://home.cnblogs.com/u/932517/" target="_blank">月上柳梢</a> <a href="http://msg.cnblogs.com/send/%E6%9C%88%E4%B8%8A%E6%9F%B3%E6%A2%A2" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3404092" class="blog_comment_body">或者发到QQ邮箱一下：734820088 多写了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3404092,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3404092,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3439180" class="layer">#5楼</a><a name="3439180" id="comment_anchor_3439180"></a>&nbsp; <span class="comment_date">2016-05-25 20:08</span>&nbsp;<a id="a_comment_author_3439180" href="http://home.cnblogs.com/u/964519/" target="_blank">王科真帅</a> <a href="http://msg.cnblogs.com/send/%E7%8E%8B%E7%A7%91%E7%9C%9F%E5%B8%85" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3439180" class="blog_comment_body"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3404090" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3404090);">@</a>
+月上柳梢<br>亲，那个代码发了吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3439180,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3439180,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3439367" class="layer">#6楼</a><a name="3439367" id="comment_anchor_3439367"></a>[<span class="louzhu">楼主</span>]&nbsp; <span class="comment_date">2016-05-26 09:02</span>&nbsp;<a id="a_comment_author_3439367" href="http://www.cnblogs.com/davidwang456/" target="_blank">一天不进步，就是退步</a> <a href="http://msg.cnblogs.com/send/%E4%B8%80%E5%A4%A9%E4%B8%8D%E8%BF%9B%E6%AD%A5%EF%BC%8C%E5%B0%B1%E6%98%AF%E9%80%80%E6%AD%A5" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3439367" class="blog_comment_body">dataSourceExchange对应的类可以实现接口org.aopalliance.intercept.MethodInterceptor的invoke方法<br>@Override<br>public Object invoke(MethodInvocation invocation) throws Throwable {<br>  DataSource dataSource = invocation.getMethod().getAnnotation(DataSource.class); <br>  DataSourceHolder.setDataSource(dataSource.name());<br>  try {<br>    invocation.proceed();<br>  } catch (Exception ex) { <br>  }<br>  return null;<br>}<br>pointcut的expression也可以写成@annotation(com.xxx.DataSource)<br>使用的时候，只需要在方法上加上注解@DataSource就行了<br>@DataSource(name = DataSource.slave1)<br>public void insert(String name) {<br>}</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3439367,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3439367,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3439367_avatar" style="display:none;">http://pic.cnblogs.com/face/486074/20141112115754.png</span>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3448375" class="layer">#7楼</a><a name="3448375" id="comment_anchor_3448375"></a>&nbsp; <span class="comment_date">2016-06-07 15:30</span>&nbsp;<a id="a_comment_author_3448375" href="http://home.cnblogs.com/u/493760/" target="_blank">白天太白</a> <a href="http://msg.cnblogs.com/send/%E7%99%BD%E5%A4%A9%E5%A4%AA%E7%99%BD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3448375" class="blog_comment_body">楼主,咨询一下,如果把数据源配置信息存在数据库表中,这时候aop这块要怎么调整才能适用这种情况呢?即是不固定死数据源,而是通过配置可以动态添加多数据源 .</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3448375,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3448375,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<div class="feedbacktitle"><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#3533989" class="layer">#8楼</a><a name="3533989" id="comment_anchor_3533989"></a><span id="comment-maxId" style="display:none;">3533989</span><span id="comment-maxDate" style="display:none;">2016/10/17 16:49:24</span>&nbsp; <span class="comment_date">2016-10-17 16:49</span>&nbsp;<a id="a_comment_author_3533989" href="http://www.cnblogs.com/tzcacm/" target="_blank">fengdui</a> <a href="http://msg.cnblogs.com/send/fengdui" title="发送站内短消息" class="sendMsg2This">&nbsp;</a></div>
+				<div align="left"><div id="comment_body_3533989" class="blog_comment_body">请问多数据源事务有什么问题吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3533989,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3533989,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div></div></div></div></div></div></div></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/davidwang456/p/4318303.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://vcloud.163.com/?adchannel=bp_cnblogs2" target="_blank">【推荐】用1%的研发投入，搭载3倍性能的网易视频云技术</a><br><a href="http://rongcloud.cn/reports/journal2" target="_blank">【推荐】融云发布 App 社交化白皮书 IM 提升活跃超 8 倍</a><br></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block"><a href="http://wijmo.gcpowertools.com.cn/microsoft-dynamics-adds-mobile-controls-powered-by-wijmo-5/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=wijmo&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/24442-20161031104659986-254946751.jpg" alt=""></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/557670/" target="_blank">如何把女儿培养成萌萌哒萝莉程序员</a><br> ·  <a href="http://news.cnblogs.com/n/557669/" target="_blank">不满足称王网游圈，腾讯会吃掉Steam的蛋糕吗？</a><br> ·  <a href="http://news.cnblogs.com/n/557668/" target="_blank">易评：中国“故事会创业模式”已走到尽头</a><br> ·  <a href="http://news.cnblogs.com/n/557667/" target="_blank">冥王星内部形态曝光 地质活动非常活跃</a><br> ·  <a href="http://news.cnblogs.com/n/557666/" target="_blank">特斯拉Model S国内全面涨价：多掏好几万！</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"><a href="https://www.jiguang.cn/devservice/?from=cnblogs01" target="_blank"><img width="468" height="60" src="./Spring(AbstractRoutingDataSource)实现动态数据源切换--转载 - 一天不进步，就是退步 - 博客园_files/24442-20161114133622451-1554357151.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/555750/" target="_blank">循序渐进地代码重构</a><br> ·  <a href="http://kb.cnblogs.com/page/554496/" target="_blank">技术的正宗与野路子</a><br> ·  <a href="http://kb.cnblogs.com/page/553682/" target="_blank">陈皓：什么是工程师文化？</a><br> ·  <a href="http://kb.cnblogs.com/page/551422/" target="_blank">没那么难，谈CSS的设计模式</a><br> ·  <a href="http://kb.cnblogs.com/page/550625/" target="_blank">程序猿媳妇儿注意事项</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"><b>历史上的今天:</b><br>2014-03-06 <a href="http://www.cnblogs.com/davidwang456/p/3585162.html">java使用jsp servlet来防止csrf 攻击的实现方法</a><br>2013-03-06 <a href="http://www.cnblogs.com/davidwang456/archive/2013/03/06/2946257.html">开发团队如何完成一个项目？</a><br></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	
+<!--done-->
+<div class="footer">
+	
+	Copyright ©2016 一天不进步，就是退步 Powered by: <a href="http://www.cnblogs.com/" class="footerlink">博客园</a> 模板提供：<a href="http://blog.hjenglish.com/" class="footerlink">沪江博客</a><br>
+</div>
+</div>
+
+
+
+<!--PageEndHtml Block Begin-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?4e17ff51730e4ef6af191fd287efc2d2";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!--PageEndHtml Block End-->
+
+
+</body></html>

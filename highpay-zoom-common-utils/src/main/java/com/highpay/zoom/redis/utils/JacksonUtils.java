@@ -1,4 +1,4 @@
-package com.highpay.zoom.utils;
+package com.highpay.zoom.redis.utils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

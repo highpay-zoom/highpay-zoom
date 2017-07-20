@@ -1,4 +1,4 @@
-package com.highpay.zoom.utils;
+package com.highpay.zoom.redis.utils;
 
 import org.apache.commons.beanutils.*;
 import org.apache.commons.beanutils.converters.DateConverter;
